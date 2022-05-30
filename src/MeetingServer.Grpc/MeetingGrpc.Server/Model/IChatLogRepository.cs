@@ -1,4 +1,4 @@
-﻿using GrpcCommon;
+﻿using MeetingGrpc.Protos;
 
 namespace GrpsServer.Model
 {

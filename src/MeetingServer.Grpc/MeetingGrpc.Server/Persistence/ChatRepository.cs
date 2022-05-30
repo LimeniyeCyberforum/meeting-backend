@@ -1,4 +1,4 @@
-﻿using GrpcCommon;
+﻿using MeetingGrpc.Protos;
 using GrpsServer.Model;
 using System.ComponentModel.Composition;
 

@@ -1,8 +1,8 @@
 using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
-using GrpcCommon;
 using GrpsServer.Model;
 using System.Reactive.Linq;
+using MeetingGrpc.Protos;
 
 namespace GrpsServer.Services
 {
