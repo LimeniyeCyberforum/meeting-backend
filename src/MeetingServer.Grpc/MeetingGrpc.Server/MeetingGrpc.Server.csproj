@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GrpcCommon\GrpcCommon.csproj" />
+    <ProjectReference Include="..\MeetingGrpc.Protos\MeetingGrpc.Protos.csproj" />
   </ItemGroup>
 
 </Project>
