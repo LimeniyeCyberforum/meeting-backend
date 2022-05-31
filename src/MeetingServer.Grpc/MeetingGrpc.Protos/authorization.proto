@@ -20,7 +20,7 @@ message ConnectRequest
 message ConnectResponse
 {
 	bool isSuccess = 1;
-	string errorMessage = 2;
+	string errorKey = 2;
 	string jwtToken = 3;
 	string userGuid = 4;
     google.protobuf.Timestamp expiration = 5;
