@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "MeetingGrpc.Protos";
+
+package MeetingGrpc.Protos;
+
+
+service Users 
+{ 
+	rpc UsersSubscribe(google.protobuf.Empty) returns (stream UserOnline);
+	rpc RefreshMyOnlineTimer(RefreshMyOnlineTimerRequest) returns (OnlineTimerRefreshResponse);
+}
+
+message RefreshMyOnlineTimerRequest 
+{
+	string userToken = 1;
+}
+
+message OnlineTimerRefreshResponse 
+{
+	google.protobuf.Timestamp disqualificationTime = 1;
+}
+
+message UserOnline
+{
+	string userGuid = 1; 
+	bool isOnline = 2;
+}

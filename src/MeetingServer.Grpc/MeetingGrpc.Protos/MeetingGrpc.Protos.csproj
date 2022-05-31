@@ -8,6 +8,7 @@
     <None Remove="authorization.proto" />
     <None Remove="chat.proto" />
     <None Remove="frameCapture.proto" />
+    <None Remove="users.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +23,7 @@
 
   <ItemGroup>
 	  <Protobuf Include="authorization.proto" />
+	  <Protobuf Include="users.proto" />
 	  <Protobuf Include="frameCapture.proto" />
 	  <Protobuf Include="chat.proto" />
   </ItemGroup>
