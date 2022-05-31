@@ -26,6 +26,13 @@ namespace MeetingGrpc.Repositories.LocalServices
             Added?.Invoke(user);
         }
 
+        public bool IsNameExists(string? name)
+        {
+            _logger.LogInformation($"{name} is exists?");
+            var user = _repository.GetAll()?.FirstOrDefault(x => x.Name == name);
+            return user == null ? false : true;
+        }
+
         public IObservable<UserDto> GetChatLogsAsObservable()
         {
             var oldUsers = _repository.GetAll().ToObservable();

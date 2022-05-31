@@ -37,6 +37,15 @@ namespace GrpsServer.Services
         //private static readonly Dictionary<Guid, string> users = new Dictionary<Guid, string>();
 
         [AllowAnonymous]
+        public override Task<CheckNameResponse> IsNameExists(CheckNameRequest request, ServerCallContext context)
+        {
+            return Task.FromResult(new CheckNameResponse
+            {
+                IsExists = request?.Username != null ? _usersService.IsNameExists(request.Username) : false
+            });
+        }
+
+        [AllowAnonymous]
         public override Task<ConnectResponse> Connect(ConnectRequest request, ServerCallContext context)
         {
             if (request?.Username == null)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 .TryAdd(newUserGuid, request.Username))

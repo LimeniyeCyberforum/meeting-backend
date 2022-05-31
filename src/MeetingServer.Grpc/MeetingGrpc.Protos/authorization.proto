@@ -10,6 +10,8 @@ package MeetingGrpc.Protos;
 service Authorization 
 {
 	rpc Connect(ConnectRequest) returns (ConnectResponse);
+
+	rpc IsNameExists(CheckNameRequest) returns (CheckNameResponse);
 }
 
 message ConnectRequest
@@ -24,4 +26,14 @@ message ConnectResponse
 	string jwtToken = 3;
 	string userGuid = 4;
     google.protobuf.Timestamp expiration = 5;
+}
+
+message CheckNameRequest
+{
+	string username = 1;
+}
+
+message CheckNameResponse
+{
+	bool isExists = 1;
 }
