@@ -10,15 +10,14 @@ package MeetingGrpc.Protos;
 
 service Chat 
 { 
-	rpc MessagesSubscribe(google.protobuf.Empty) returns (stream MessageFromLobby);
+	rpc MessagesSubscribe(google.protobuf.Empty) returns (stream LobbyMessage);
 	rpc SendMessage(MessageRequest) returns (google.protobuf.Empty);
 }
 
 message MessageRequest 
 {
-	string userGuid = 1;
-	string messageGuid = 2;
-	string message = 3;
+	string messageGuid = 1;
+	string message = 2;
 }
 
 message MessageResponse 
@@ -27,12 +26,11 @@ message MessageResponse
 	google.protobuf.Timestamp time = 2;
 }
 
-message MessageFromLobby
+message LobbyMessage
 {
 	string username = 1;
-	string messageGuid = 2;
+	string userGuid = 2;
 	string message = 3;
-	google.protobuf.Timestamp time = 4;
-	// TODO : Temporary
-	string userGuid = 5;
+	string messageGuid = 4;
+	google.protobuf.Timestamp time = 5;
 }
