@@ -9,17 +9,22 @@ package MeetingGrpc.Protos;
 
 service FrameCapture 
 { 
-	rpc FrameCapturesSubscribe(google.protobuf.Empty) returns (stream FrameCaptureResponse);
-	rpc SendFrameCapture(bytes) returns (google.protobuf.Empty);
+	rpc FrameCapturesSubscribe(google.protobuf.Empty) returns (stream UserFrameCapture);
+	rpc SendFrameCapture(FrameCaptureRequest) returns (google.protobuf.Empty);
 
 	rpc FrameCaptureStatesSubscribe(google.protobuf.Empty) returns (stream FrameCaptureStateResponse);
 	rpc TurnOffFrameCapture(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
-message FrameCaptureResponse
+message UserFrameCapture
 {
 	string userGuid = 1;
 	bytes captureFrame = 2;
+}
+
+message FrameCaptureRequest
+{
+	bytes captureFrame = 1;
 }
 
 message FrameCaptureStateResponse
