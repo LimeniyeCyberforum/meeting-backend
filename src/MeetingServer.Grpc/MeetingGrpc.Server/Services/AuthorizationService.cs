@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MeetingGrpc.Repositories.LocalServices;
 
 namespace GrpsServer.Services
 {
@@ -18,14 +19,15 @@ namespace GrpsServer.Services
         private readonly ILogger<AuthorizationService> _logger;
         private readonly IConfiguration _configuration;
 
-        //private readonly ChatService _chatService;
+        private readonly UsersService _usersService;
 
-        private readonly UsersCameraCaptureService _usersCameraCaptureService;
+        //private readonly UsersCameraCaptureService _usersCameraCaptureService;
 
-        public AuthorizationService(ILogger<AuthorizationService> logger, IConfiguration configuration/*, ChatService loggerTest, UsersCameraCaptureService usersCameraCaptureService*/)
+        public AuthorizationService(ILogger<AuthorizationService> logger, IConfiguration configuration, UsersService usersService)
         {
             _logger = logger;
             _configuration = configuration;
+            _usersService = usersService;
             //_chatService = loggerTest;
             //_usersCameraCaptureService = usersCameraCaptureService;
         }
@@ -45,7 +47,6 @@ namespace GrpsServer.Services
                 });
             }
 
-            // TODO : Users add
             var newUser = new UserDto
             {
                 UserGuid = Guid.NewGuid(),
@@ -57,6 +58,8 @@ namespace GrpsServer.Services
                 "User"
             };
             var token = GetJwtToken(newUser, userRoles);
+
+            _usersService.Add(newUser);
 
             return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUser.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }
