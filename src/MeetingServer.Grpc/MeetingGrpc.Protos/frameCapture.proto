@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "MeetingGrpc.Protos";
+
+package MeetingGrpc.Protos;
+
+service FrameCapture 
+{ 
+	rpc CameraCaptureSubscribe(google.protobuf.Empty) returns (stream CameraCapture);
+	rpc SendCameraFrame(CameraCapture) returns (google.protobuf.Empty);
+}
+
+message CameraCapture
+{
+	string userGuid = 1;
+	bytes captureFrame = 2;
+}

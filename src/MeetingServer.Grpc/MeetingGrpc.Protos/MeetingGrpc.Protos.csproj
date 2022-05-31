@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="meeting.proto" />
+    <None Remove="authorization.proto" />
+    <None Remove="chat.proto" />
+    <None Remove="frameCapture.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <Protobuf Include="meeting.proto"/>
+	  <Protobuf Include="authorization.proto" />
+	  <Protobuf Include="frameCapture.proto" />
+	  <Protobuf Include="chat.proto" />
   </ItemGroup>
 </Project>

@@ -8,33 +8,10 @@ option csharp_namespace = "MeetingGrpc.Protos";
 package MeetingGrpc.Protos;
 
 
-service Meeting 
-{
-	rpc Connect(ConnectRequest) returns (ConnectResponse);
-
+service Chat 
+{ 
 	rpc MessagesSubscribe(google.protobuf.Empty) returns (stream MessageFromLobby);
 	rpc SendMessage(MessageRequest) returns (google.protobuf.Empty);
-
-	rpc CameraCaptureSubscribe(google.protobuf.Empty) returns (stream CameraCapture);
-	rpc SendCameraFrame(CameraCapture) returns (google.protobuf.Empty);
-}
-
-message ConnectRequest
-{
-	string username = 1;
-}
-
-message ConnectResponse
-{
-	bool isSuccessfully = 1;
-	string errorMessage = 2;
-	string guid = 3;
-}
-
-message CameraCapture
-{
-	string userGuid = 1;
-	bytes captureFrame = 2;
 }
 
 message MessageRequest 
@@ -58,5 +35,4 @@ message MessageFromLobby
 	google.protobuf.Timestamp time = 4;
 	// TODO : Temporary
 	string userGuid = 5;
-
 }

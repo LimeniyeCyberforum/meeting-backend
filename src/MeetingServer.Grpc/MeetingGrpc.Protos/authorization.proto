@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "MeetingGrpc.Protos";
+
+package MeetingGrpc.Protos;
+
+
+service Authorization 
+{
+	rpc Connect(ConnectRequest) returns (ConnectResponse);
+}
+
+message ConnectRequest
+{
+	string username = 1;
+}
+
+message ConnectResponse
+{
+	bool isSuccess = 1;
+	string errorMessage = 2;
+	string jwtToken = 3;
+    google.protobuf.Timestamp expiration = 4;
+}
