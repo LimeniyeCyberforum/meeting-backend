@@ -8,9 +8,9 @@ namespace MeetingGrpc.Repositories.LocalServices
     {
         private readonly ILogger<UsersService> _logger;
 
-        private readonly IUsersRepository _repository;
+        private readonly IRepository<UserDto> _repository;
 
-        public UsersService(ILogger<UsersService> logger, IUsersRepository repository)
+        public UsersService(ILogger<UsersService> logger, IRepository<UserDto> repository)
         {
             _logger = logger;
             _repository = repository;
