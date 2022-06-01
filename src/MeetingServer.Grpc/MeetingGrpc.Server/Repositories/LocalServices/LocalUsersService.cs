@@ -21,9 +21,16 @@ namespace MeetingGrpc.Repositories.LocalServices
 
         public void Add(User user)
         {
-            _logger.LogInformation($"{user.Name}: connected");
             _repository.Add(user);
             Added?.Invoke(user);
+            _logger.LogInformation($"{user.Name}: connected");
+        }
+
+        public void Remove(User user)
+        {
+            _repository.Remove(user);
+            Removed?.Invoke(new User(user.UserGuid, user.Name, false));
+            _logger.LogInformation($"{user.Name}: left");
         }
 
         public bool IsNameExists(string? name)
