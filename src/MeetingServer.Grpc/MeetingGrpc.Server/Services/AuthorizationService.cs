@@ -1,7 +1,6 @@
 using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
 using MeetingGrpc.Protos;
-using MeetingGrpc.Server.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MeetingGrpc.Server.Model;
@@ -11,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MeetingGrpc.Repositories.LocalServices;
 
-namespace GrpsServer.Services
+namespace MeetingGrpc.Server.Services
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorizationService : Authorization.AuthorizationBase
@@ -48,7 +47,7 @@ namespace GrpsServer.Services
         [AllowAnonymous]
         public override Task<ConnectResponse> Connect(ConnectRequest request, ServerCallContext context)
         {
-            if (request?.Username == null)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 .TryAdd(newUserGuid, request.Username))
+            if (request?.Username == null)
             {
                 return Task.FromResult(new ConnectResponse
                 {
@@ -62,7 +61,7 @@ namespace GrpsServer.Services
             var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, true, token);
 
 
-            _usersService.Add(newUser);
+            _usersService.Add(userFull);
 
             return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUserNotFull.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }
