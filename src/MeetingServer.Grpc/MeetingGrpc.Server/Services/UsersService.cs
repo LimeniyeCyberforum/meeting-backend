@@ -13,19 +13,16 @@ namespace MeetingGrpc.Server.Services
     public class UsersService : Users.UsersBase
     {
         private readonly ILogger<UsersService> _logger;
-        private readonly IConfiguration _configuration;
 
         private readonly LocalUsersService _usersService;
 
-        public UsersService(ILogger<UsersService> logger, IConfiguration configuration, LocalUsersService usersService)
+        public UsersService(ILogger<UsersService> logger, LocalUsersService usersService)
         {
             _logger = logger;
-            _configuration = configuration;
             _usersService = usersService;
-            //_chatService = loggerTest;
-            //_usersCameraCaptureService = usersCameraCaptureService;
         }
 
+        [AllowAnonymous]
         public override async Task UsersSubscribe(Empty request, IServerStreamWriter<UserOnline> responseStream, ServerCallContext context)
         {
             var peer = context.Peer;
@@ -49,6 +46,12 @@ namespace MeetingGrpc.Server.Services
             {
                 _logger.LogError($"{peer} unsubscribed.");
             }
+        }
+
+        [Authorize]
+        public override Task<OnlineTimerRefreshResponse> RefreshMyOnlineTimer(Empty request, ServerCallContext context)
+        {
+            throw new NotFiniteNumberException();
         }
     }
 }

@@ -11,12 +11,7 @@ package MeetingGrpc.Protos;
 service Users 
 { 
 	rpc UsersSubscribe(google.protobuf.Empty) returns (stream UserOnline);
-	rpc RefreshMyOnlineTimer(RefreshMyOnlineTimerRequest) returns (OnlineTimerRefreshResponse);
-}
-
-message RefreshMyOnlineTimerRequest 
-{
-	string userToken = 1;
+	rpc RefreshMyOnlineTimer(google.protobuf.Empty) returns (OnlineTimerRefreshResponse);
 }
 
 message OnlineTimerRefreshResponse 
