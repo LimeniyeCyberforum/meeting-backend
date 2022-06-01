@@ -4,13 +4,13 @@ using System.Reactive.Linq;
 
 namespace MeetingGrpc.Repositories.LocalServices
 {
-    public class UsersService
+    public class LocalUsersService
     {
-        private readonly ILogger<UsersService> _logger;
+        private readonly ILogger<LocalUsersService> _logger;
 
         private readonly IRepository<UserDto> _repository;
 
-        public UsersService(ILogger<UsersService> logger, IRepository<UserDto> repository)
+        public LocalUsersService(ILogger<LocalUsersService> logger, IRepository<UserDto> repository)
         {
             _logger = logger;
             _repository = repository;

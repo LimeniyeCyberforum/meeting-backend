@@ -19,11 +19,11 @@ namespace GrpsServer.Services
         private readonly ILogger<AuthorizationService> _logger;
         private readonly IConfiguration _configuration;
 
-        private readonly UsersService _usersService;
+        private readonly LocalUsersService _usersService;
 
         //private readonly UsersCameraCaptureService _usersCameraCaptureService;
 
-        public AuthorizationService(ILogger<AuthorizationService> logger, IConfiguration configuration, UsersService usersService)
+        public AuthorizationService(ILogger<AuthorizationService> logger, IConfiguration configuration, LocalUsersService usersService)
         {
             _logger = logger;
             _configuration = configuration;
