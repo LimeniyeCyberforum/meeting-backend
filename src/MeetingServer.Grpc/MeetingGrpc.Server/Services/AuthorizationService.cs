@@ -56,13 +56,15 @@ namespace GrpsServer.Services
                 });
             }
 
-            User newUser = new User(Guid.NewGuid(), request.Username, true);
+            User newUserNotFull = new User(Guid.NewGuid(), request.Username, true, null);
             var userRoles = new List<string> { "User" };
-            var token = GetJwtToken(newUser, userRoles);
+            var token = GetJwtToken(newUserNotFull, userRoles);
+            var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, true, token);
+
 
             _usersService.Add(newUser);
 
-            return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUser.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
+            return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUserNotFull.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }
 
         private Token GetJwtToken(User applicationUserDto, IEnumerable<string> roles)

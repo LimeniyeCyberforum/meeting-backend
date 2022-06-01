@@ -29,7 +29,7 @@ namespace MeetingGrpc.Repositories.LocalServices
         public void Remove(User user)
         {
             _repository.Remove(user);
-            Removed?.Invoke(new User(user.UserGuid, user.Name, false));
+            Removed?.Invoke(new User(user.UserGuid, user.Name, false, user.Token));
             _logger.LogInformation($"{user.Name}: left");
         }
 
