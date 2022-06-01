@@ -56,16 +56,8 @@ namespace GrpsServer.Services
                 });
             }
 
-            var newUser = new UserDto
-            {
-                UserGuid = Guid.NewGuid(),
-                Name = request.Username,
-            };
-
-            var userRoles = new List<string>
-            {
-                "User"
-            };
+            User newUser = new User(Guid.NewGuid(), request.Username, true);
+            var userRoles = new List<string> { "User" };
             var token = GetJwtToken(newUser, userRoles);
 
             _usersService.Add(newUser);
@@ -73,7 +65,7 @@ namespace GrpsServer.Services
             return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUser.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }
 
-        private TokenDto GetJwtToken(UserDto applicationUserDto, IEnumerable<string> roles)
+        private Token GetJwtToken(User applicationUserDto, IEnumerable<string> roles)
         {
             var applicationUserClaims = GetApplicationUserClaims(applicationUserDto);
             var applicationUserRolesClaims = GetRolesAsClaims(roles);
@@ -84,14 +76,10 @@ namespace GrpsServer.Services
             var jwtHeader = new JwtHeader(signingCredential);
             var jwtPayload = new JwtPayload(claims);
             var token = new JwtSecurityToken(jwtHeader, jwtPayload);
-            return new TokenDto
-            {
-                JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = token.ValidTo
-            };
+            return new Token(new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo);
         }
 
-        private static IEnumerable<Claim> GetApplicationUserClaims(UserDto userDto)
+        private static IEnumerable<Claim> GetApplicationUserClaims(User userDto)
         {
             return new[]
             {
@@ -128,7 +116,7 @@ namespace GrpsServer.Services
 
         //    try
         //    {
-        //        await _chatService.GetChatLogsAsObservable()
+        //        await _chatService.GetUsersAsObservable()
         //            .ToAsyncEnumerable()
         //            .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(x), context.CancellationToken)
         //            .ConfigureAwait(false);
