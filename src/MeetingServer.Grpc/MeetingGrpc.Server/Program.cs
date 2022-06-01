@@ -4,9 +4,33 @@ using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories;
 using MeetingGrpc.Server.Repositories.LocalServices;
 using MeetingGrpc.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration.GetValue<string>("JwtAudience"),
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration.GetValue<string>("JwtIssuer"),
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JwtKey"))),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromMinutes(5)
+    };
+});
+builder.Services.AddAuthorization();
 builder.Services.AddGrpc();
 
 builder.Services.AddSingleton<IRepository<Message>, ChatRepository>();
