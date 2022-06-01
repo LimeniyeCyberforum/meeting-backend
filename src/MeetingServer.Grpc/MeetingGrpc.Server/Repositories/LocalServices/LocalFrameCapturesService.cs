@@ -5,13 +5,13 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 {
     public class LocalFrameCapturesService
     {
-        private readonly IUsersCameraCaptureRepository _repository;
+        private readonly IRepository<FrameCaptureState> _repository;
 
         private event Action<FrameCaptureState> FrameCaptureStreamStarted;
         private event Action<FrameCaptureState> FrameCaptureStreamStoped;
         private event Action<UserFrameCapture> FrameCaptureUpdated;
 
-        public LocalFrameCapturesService(IUsersCameraCaptureRepository repository)
+        public LocalFrameCapturesService(IRepository<FrameCaptureState> repository)
         {
             _repository = repository;
         }
@@ -20,10 +20,12 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
         {
             if (newState.IsOn)
             {
+                _repository.Add(newState);
                 FrameCaptureStreamStarted?.Invoke(newState);
             }
             else
             {
+                _repository.Remove(newState);
                 FrameCaptureStreamStoped?.Invoke(newState);
             }
         }
