@@ -8,18 +8,18 @@ namespace MeetingGrpc.Repositories.LocalServices
     {
         private readonly ILogger<LocalUsersService> _logger;
 
-        private readonly IRepository<UserDto> _repository;
+        private readonly IRepository<User> _repository;
 
-        public LocalUsersService(ILogger<LocalUsersService> logger, IRepository<UserDto> repository)
+        public LocalUsersService(ILogger<LocalUsersService> logger, IRepository<User> repository)
         {
             _logger = logger;
             _repository = repository;
         }
 
-        private event Action<UserDto> Added;
-        private event Action<UserDto> Removed;
+        private event Action<User> Added;
+        private event Action<User> Removed;
 
-        public void Add(UserDto user)
+        public void Add(User user)
         {
             _logger.LogInformation($"{user.Name}: connected");
             _repository.Add(user);
@@ -33,11 +33,11 @@ namespace MeetingGrpc.Repositories.LocalServices
             return user == null ? false : true;
         }
 
-        public IObservable<UserDto> GetChatLogsAsObservable()
+        public IObservable<User> GetUsersAsObservable()
         {
             var oldUsers = _repository.GetAll().ToObservable();
-            var userRemoved = Observable.FromEvent<UserDto>((x) => Removed += x, (x) => Added -= x);
-            var usedAdded = Observable.FromEvent<UserDto>((x) => Added += x, (x) => Added -= x);
+            var userRemoved = Observable.FromEvent<User>((x) => Removed += x, (x) => Removed -= x);
+            var usedAdded = Observable.FromEvent<User>((x) => Added += x, (x) => Added -= x);
 
             return oldUsers.Concat(userRemoved).Concat(usedAdded);
         }
