@@ -12,8 +12,9 @@ service FrameCapture
 	rpc FrameCapturesSubscribe(google.protobuf.Empty) returns (stream UserFrameCapture);
 	rpc SendFrameCapture(FrameCaptureRequest) returns (google.protobuf.Empty);
 
-	rpc FrameCaptureStatesSubscribe(google.protobuf.Empty) returns (stream FrameCaptureStateResponse);
+	rpc FrameCaptureStatesSubscribe(google.protobuf.Empty) returns (stream FrameCaptureState);
 	rpc TurnOffFrameCapture(google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc TurnOnFrameCapture(google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 message UserFrameCapture
@@ -27,7 +28,7 @@ message FrameCaptureRequest
 	bytes captureFrame = 1;
 }
 
-message FrameCaptureStateResponse
+message FrameCaptureState
 {
 	string userGuid = 1;
 	bool isOn = 2;
