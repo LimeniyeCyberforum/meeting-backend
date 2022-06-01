@@ -33,14 +33,14 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             FrameCaptureUpdated?.Invoke(cameraCapture);
         }
 
-        public IObservable<FrameCaptureState> GetCaptureFrameStatesAsObservable()
+        public IObservable<FrameCaptureState> CaptureFrameStatesAsObservable()
         {
             var started = Observable.FromEvent<FrameCaptureState>((x) => FrameCaptureStreamStarted += x, (x) => FrameCaptureStreamStarted -= x);
             var stoped = Observable.FromEvent<FrameCaptureState>((x) => FrameCaptureStreamStoped += x, (x) => FrameCaptureStreamStoped -= x);
             return started.Concat(stoped);
         }
 
-        public IObservable<UserFrameCapture> GetCaptureFramesAsObservable()
+        public IObservable<UserFrameCapture> FrameCapturesAsObservable()
         {
             var newFrame = Observable.FromEvent<UserFrameCapture>((x) => FrameCaptureUpdated += x, (x) => FrameCaptureUpdated -= x);
             return newFrame;
