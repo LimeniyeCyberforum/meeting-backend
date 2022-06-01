@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using Grpc.Core;
-using GrpsServer.Services;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Xunit;
