@@ -94,22 +94,12 @@ namespace MeetingGrpc.Server.Services
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
-            //var user = GetUserFromMetadata(context.RequestHeaders);
+            var user = GetUserFromMetadata(context.RequestHeaders);
 
-            //if (user == null)
-            //    throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            //_frameCapturesService.UpdateFrameCapture(new UserFrameCapture { UserGuid = user.UserGuid, CaptureFrame =  })
-
-            //_chatService.Add(new Message(messageGuid, request.Message, Timestamp.FromDateTime(DateTime.UtcNow),
-            //                    new User()
-            //    Username = username,
-            //    MessageGuid = request.MessageGuid,
-            //    Message = request.Message,
-            //    Time = ,
-            //    // TODO : Temporary
-            //    UserGuid = request.UserGuid
-            //});
+            _frameCapturesService.NewFrameCaptureState(new FrameCaptureState { IsOn = false, UserGuid = user.UserGuid.ToString() });
 
             return Task.FromResult(empty);
         }
@@ -120,22 +110,12 @@ namespace MeetingGrpc.Server.Services
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
-            //if (!Guid.TryParse(request., out Guid messageGuid))
-            //    throw new NotImplementedException();
+            var user = GetUserFromMetadata(context.RequestHeaders);
 
-            var user = context.GetHttpContext().User;
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            throw new NotImplementedException(" Should to finde user from context");
-
-            //_chatService.Add(new Message(messageGuid, request.Message, Timestamp.FromDateTime(DateTime.UtcNow),
-            //                    new User()
-            //    Username = username,
-            //    MessageGuid = request.MessageGuid,
-            //    Message = request.Message,
-            //    Time = ,
-            //    // TODO : Temporary
-            //    UserGuid = request.UserGuid
-            //});
+            _frameCapturesService.NewFrameCaptureState(new FrameCaptureState { IsOn = true, UserGuid = user.UserGuid.ToString() });
 
             return Task.FromResult(empty);
         }
