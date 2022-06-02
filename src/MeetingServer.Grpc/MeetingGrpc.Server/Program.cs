@@ -24,6 +24,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ClockSkew = TimeSpan.FromMinutes(5)
     };
 });
+
 builder.Services.AddAuthorization();
 builder.Services.AddGrpc();
 
