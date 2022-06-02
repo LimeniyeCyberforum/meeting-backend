@@ -68,7 +68,7 @@ namespace MeetingGrpc.Server.Services
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
 
-            _chatService.Add(new Message(messageGuid, request.Message, DateTime.UtcNow, user);
+            _chatService.Add(new Message(messageGuid, request.Message, DateTime.UtcNow, user));
 
             return Task.FromResult(empty);
         }

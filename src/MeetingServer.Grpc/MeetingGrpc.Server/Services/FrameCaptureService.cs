@@ -50,24 +50,9 @@ namespace MeetingGrpc.Server.Services
         [Authorize]
         public override Task<Empty> SendFrameCapture(FrameCaptureRequest request, ServerCallContext context)
         {
-            _logger.LogInformation($"{context.Peer} {request}");
-
-            //if (!Guid.TryParse(request., out Guid messageGuid))
-            //    throw new NotImplementedException();
+            //_logger.LogInformation($"{context.Peer} {request}");
 
             var user = context.GetHttpContext().User;
-
-            throw new NotImplementedException(" Should to finde user from context");
-
-            //_chatService.Add(new Message(messageGuid, request.Message, Timestamp.FromDateTime(DateTime.UtcNow),
-            //                    new User()
-            //    Username = username,
-            //    MessageGuid = request.MessageGuid,
-            //    Message = request.Message,
-            //    Time = ,
-            //    // TODO : Temporary
-            //    UserGuid = request.UserGuid
-            //});
 
             return Task.FromResult(empty);
         }
