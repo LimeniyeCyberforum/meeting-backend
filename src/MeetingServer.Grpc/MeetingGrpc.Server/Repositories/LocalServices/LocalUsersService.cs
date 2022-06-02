@@ -1,4 +1,5 @@
-﻿using MeetingGrpc.Server.Model;
+﻿using Grpc.Core;
+using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories;
 using System.Reactive.Linq;
 
@@ -31,6 +32,11 @@ namespace MeetingGrpc.Repositories.LocalServices
             _repository.Remove(user);
             Removed?.Invoke(new User(user.UserGuid, user.Name, false, user.Token));
             _logger.LogInformation($"{user.Name}: left");
+        }
+
+        public User? GetUserFromToken(string token)
+        {
+           return _repository.GetAll().FirstOrDefault(x => string.Equals(x.Token?.JwtToken, token));
         }
 
         public bool IsNameExists(string? name)
