@@ -1,6 +1,8 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MeetingGrpc.Protos;
+using MeetingGrpc.Repositories.LocalServices;
+using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories.LocalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +15,13 @@ namespace MeetingGrpc.Server.Services
         private readonly Empty empty = new Empty();
         private readonly ILogger<ChatService> _logger;
         private readonly LocalFrameCapturesService _frameCapturesService;
+        private readonly LocalUsersService _usersService;
 
-
-        public FrameCaptureService(ILogger<ChatService> logger, LocalFrameCapturesService frameCapturesService)
+        public FrameCaptureService(ILogger<ChatService> logger, LocalFrameCapturesService frameCapturesService, LocalUsersService usersService)
         {
             _logger = logger;
             _frameCapturesService = frameCapturesService;
+            _usersService = usersService;
         }
 
         [AllowAnonymous]
@@ -50,9 +53,12 @@ namespace MeetingGrpc.Server.Services
         [Authorize]
         public override Task<Empty> SendFrameCapture(FrameCaptureRequest request, ServerCallContext context)
         {
-            //_logger.LogInformation($"{context.Peer} {request}");
+            var user = GetUserFromMetadata(context.RequestHeaders);
 
-            var user = context.GetHttpContext().User;
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
+
+            _frameCapturesService.UpdateFrameCapture(new UserFrameCapture { UserGuid = user.UserGuid.ToString(), CaptureFrame = request.CaptureFrame });
 
             return Task.FromResult(empty);
         }
@@ -88,12 +94,12 @@ namespace MeetingGrpc.Server.Services
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
-            //if (!Guid.TryParse(request., out Guid messageGuid))
-            //    throw new NotImplementedException();
+            //var user = GetUserFromMetadata(context.RequestHeaders);
 
-            var user = context.GetHttpContext().User;
+            //if (user == null)
+            //    throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            throw new NotImplementedException(" Should to finde user from context");
+            //_frameCapturesService.UpdateFrameCapture(new UserFrameCapture { UserGuid = user.UserGuid, CaptureFrame =  })
 
             //_chatService.Add(new Message(messageGuid, request.Message, Timestamp.FromDateTime(DateTime.UtcNow),
             //                    new User()
@@ -132,6 +138,19 @@ namespace MeetingGrpc.Server.Services
             //});
 
             return Task.FromResult(empty);
+        }
+
+        private User? GetUserFromMetadata(Metadata metadata)
+        {
+            if (metadata == null)
+                throw new RpcException(new Status(StatusCode.PermissionDenied, "Permission denied"), metadata);
+
+            var token = metadata.FirstOrDefault(x => x.Key == "authorization");
+
+            if (token?.Value == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "Token is null"), metadata);
+
+            return _usersService.GetUserFromToken(token.Value);
         }
     }
 }
