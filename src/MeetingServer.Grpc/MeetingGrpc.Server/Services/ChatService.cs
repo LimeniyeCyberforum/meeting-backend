@@ -1,6 +1,8 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MeetingGrpc.Protos;
+using MeetingGrpc.Repositories.LocalServices;
+using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories.LocalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +15,14 @@ namespace MeetingGrpc.Server.Services
         private readonly Empty empty = new Empty();
         private readonly ILogger<ChatService> _logger;
         private readonly LocalChatService _chatService;
+        private readonly LocalUsersService _usersService;
 
 
-        public ChatService(ILogger<ChatService> logger, LocalChatService chatService)
+        public ChatService(ILogger<ChatService> logger, LocalChatService chatService, LocalUsersService localUsersService)
         {
             _logger = logger;
             _chatService = chatService;
+            _usersService = localUsersService;
         }
 
         [AllowAnonymous]
@@ -58,21 +62,28 @@ namespace MeetingGrpc.Server.Services
             if (!Guid.TryParse(request.MessageGuid, out Guid messageGuid))
                 throw new NotImplementedException();
 
-            var user = context.GetHttpContext().User;
+            var user = GetUserFromMetadata(context.RequestHeaders);
 
-            throw new ArgumentException(" Should to finde user from context");
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            //_chatService.Add(new Message(messageGuid, request.Message, Timestamp.FromDateTime(DateTime.UtcNow),
-            //                    new User()
-            //    Username = username,
-            //    MessageGuid = request.MessageGuid,
-            //    Message = request.Message,
-            //    Time = ,
-            //    // TODO : Temporary
-            //    UserGuid = request.UserGuid
-            //});
+
+            _chatService.Add(new Message(messageGuid, request.Message, DateTime.UtcNow, user);
 
             return Task.FromResult(empty);
+        }
+
+        private User? GetUserFromMetadata(Metadata metadata)
+        {
+            if (metadata == null)
+                throw new RpcException(new Status(StatusCode.PermissionDenied, "Permission denied"), metadata);
+
+            var token = metadata.FirstOrDefault(x => x.Key == "authorization");
+
+            if (token?.Value == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "Token is null"), metadata);
+
+            return _usersService.GetUserFromToken(token.Value);
         }
     }
 }
