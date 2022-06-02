@@ -39,10 +39,13 @@ builder.Services.AddSingleton<LocalFrameCapturesService>();
 var app = builder.Build();
 
 app.UseGrpcWeb();
+app.UseAuthentication();
+app.UseRouting();
+app.UseAuthorization();
+app.MapGrpcService<UsersService>().EnableGrpcWeb();
 app.MapGrpcService<AuthorizationService>().EnableGrpcWeb();
 app.MapGrpcService<ChatService>().EnableGrpcWeb();
 app.MapGrpcService<FrameCaptureService>().EnableGrpcWeb();
-app.MapGrpcService<UsersService>().EnableGrpcWeb();
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
