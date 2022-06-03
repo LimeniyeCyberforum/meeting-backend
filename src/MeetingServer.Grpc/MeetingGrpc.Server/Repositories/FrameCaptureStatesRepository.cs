@@ -1,23 +1,22 @@
-﻿using MeetingGrpc.Protos;
-using System.ComponentModel.Composition;
+﻿using MeetingGrpc.Server.Model;
 
 namespace MeetingGrpc.Server.Repositories
 {
-    public class FrameCaptureStatesRepository : IRepository<FrameCaptureState>
+    public class FrameCaptureStatesRepository : IRepository<FrameCaptureInfo>
     {
-        private readonly List<FrameCaptureState> localStorage = new List<FrameCaptureState>(); // dummy on memory storage
+        private readonly List<FrameCaptureInfo> localStorage = new List<FrameCaptureInfo>(); // dummy on memory storage
 
-        public void Add(FrameCaptureState message)
+        public void Add(FrameCaptureInfo message)
         {
             localStorage.Add(message);
         }
 
-        public void Remove(FrameCaptureState cameraCapture)
+        public void Remove(FrameCaptureInfo cameraCapture)
         {
             localStorage.Remove(cameraCapture);
         }
 
-        public IEnumerable<FrameCaptureState> GetAll()
+        public IEnumerable<FrameCaptureInfo> GetAll()
         {
             return localStorage.AsReadOnly();
         }
