@@ -39,7 +39,7 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new UserFrameCapture
                         {
-                            UserGuid = x.UserGuid,
+                            CatureAreaGuid = x.UserGuid,
                             CaptureFrame = x.CaptureFrame
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
@@ -58,7 +58,7 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _frameCapturesService.UpdateFrameCapture(new UserFrameCapture { UserGuid = user.UserGuid.ToString(), CaptureFrame = request.CaptureFrame });
+            _frameCapturesService.UpdateFrameCapture(new UserFrameCapture { CatureAreaGuid = user.UserGuid.ToString(), CaptureFrame = request.CaptureFrame });
 
             return Task.FromResult(empty);
         }
@@ -78,7 +78,7 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new FrameCaptureState
                         {
-                            UserGuid = x.UserGuid,
+                            CatureAreaGuid = x.UserGuid,
                             IsOn = x.IsOn
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
@@ -90,7 +90,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [Authorize]
-        public override Task<Empty> TurnOffFrameCapture(Empty request, ServerCallContext context)
+        public override Task<Empty> SwitchFrameCaptureState(FrameCaptureState request, ServerCallContext context)
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
@@ -99,23 +99,7 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _frameCapturesService.NewFrameCaptureState(new FrameCaptureState { IsOn = false, UserGuid = user.UserGuid.ToString() });
-
-            return Task.FromResult(empty);
-        }
-
-
-        [Authorize]
-        public override Task<Empty> TurnOnFrameCapture(Empty request, ServerCallContext context)
-        {
-            _logger.LogInformation($"{context.Peer} {request}");
-
-            var user = GetUserFromMetadata(context.RequestHeaders);
-
-            if (user == null)
-                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
-
-            _frameCapturesService.NewFrameCaptureState(new FrameCaptureState { IsOn = true, UserGuid = user.UserGuid.ToString() });
+            _frameCapturesService.ShitchFrameCapture(new FrameCaptureInfo(Guid.Parse(request.CatureAreaGuid), user.UserGuid), request.IsOn);
 
             return Task.FromResult(empty);
         }
