@@ -30,7 +30,7 @@ builder.Services.AddGrpc();
 
 builder.Services.AddSingleton<IRepository<Message>, ChatRepository>();
 builder.Services.AddSingleton<IRepository<FrameCaptureInfo>, FrameCaptureStatesRepository>();
-builder.Services.AddSingleton<IRepository<User>, UsersRepository>();
+builder.Services.AddSingleton<IRepository<MeetingGrpc.Server.Model.User>, UsersRepository>();
 
 builder.Services.AddSingleton<LocalUsersService>();
 builder.Services.AddSingleton<LocalChatService>();
