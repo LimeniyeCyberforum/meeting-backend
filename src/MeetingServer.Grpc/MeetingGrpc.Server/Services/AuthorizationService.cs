@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MeetingGrpc.Repositories.LocalServices;
+using User = MeetingGrpc.Server.Model.User;
 
 namespace MeetingGrpc.Server.Services
 {
@@ -55,10 +56,10 @@ namespace MeetingGrpc.Server.Services
                 });
             }
 
-            User newUserNotFull = new User(Guid.NewGuid(), request.Username, true, null);
+            User newUserNotFull = new User(Guid.NewGuid(), request.Username, null);
             var userRoles = new List<string> { "User" };
             var token = GetJwtToken(newUserNotFull, userRoles);
-            var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, true, token);
+            var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, token);
 
 
             _usersService.Add(userFull);
