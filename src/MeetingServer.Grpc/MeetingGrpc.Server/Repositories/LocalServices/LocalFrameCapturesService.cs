@@ -7,8 +7,7 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
     {
         private readonly IRepository<FrameCaptureInfo> _repository;
 
-        private event Action<FrameCaptureInfo> FrameCaptureStreamStarted;
-        private event Action<FrameCaptureInfo> FrameCaptureStreamStoped;  
+        private event Action<(bool IsOn, FrameCaptureInfo FrameCaptureInfo)> FrameCaptureStreamChanged;  
         private event Action<FrameCaptureArea> FrameCaptureUpdated;
 
         public LocalFrameCapturesService(IRepository<FrameCaptureInfo> repository)
@@ -21,13 +20,13 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             if (isOn)
             {
                 _repository.Add(frameCaptureInfo);
-                FrameCaptureStreamStarted?.Invoke(frameCaptureInfo);
             }
             else
             {
                 _repository.Remove(frameCaptureInfo);
-                FrameCaptureStreamStoped?.Invoke(frameCaptureInfo);
             }
+
+            FrameCaptureStreamChanged?.Invoke((isOn, frameCaptureInfo));
         }
 
         public void UpdateFrameCapture(FrameCaptureArea cameraCapture)
@@ -35,11 +34,10 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             FrameCaptureUpdated?.Invoke(cameraCapture);
         }
 
-        public IObservable<FrameCaptureInfo> CaptureFrameStatesAsObservable()
+        public IObservable<(bool IsOn, FrameCaptureInfo FrameCaptureInfo)> CaptureFrameStatesAsObservable()
         {
-            var started = Observable.FromEvent<FrameCaptureInfo>((x) => FrameCaptureStreamStarted += x, (x) => FrameCaptureStreamStarted -= x);
-            var stoped = Observable.FromEvent<FrameCaptureInfo>((x) => FrameCaptureStreamStoped += x, (x) => FrameCaptureStreamStoped -= x);
-            return started.Concat(stoped);
+            var started = Observable.FromEvent<(bool IsOn, FrameCaptureInfo FrameCaptureInfo)>((x) => FrameCaptureStreamChanged += x, (x) => FrameCaptureStreamChanged -= x);
+            return started;
         }
 
         public IObservable<FrameCaptureArea> FrameCapturesAsObservable()

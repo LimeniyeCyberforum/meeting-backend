@@ -78,7 +78,8 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new FrameCaptureState
                         {
-                            CatureAreaGuid = x.FrameCaptureAreaGuid.ToString()
+                            IsOn = x.IsOn,
+                            CatureAreaGuid = x.FrameCaptureInfo.FrameCaptureAreaGuid.ToString()
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
             }
@@ -103,7 +104,7 @@ namespace MeetingGrpc.Server.Services
             return Task.FromResult(empty);
         }
 
-        private User? GetUserFromMetadata(Metadata metadata)
+        private Model.User? GetUserFromMetadata(Metadata metadata)
         {
             if (metadata == null)
                 throw new RpcException(new Status(StatusCode.PermissionDenied, "Permission denied"), metadata);
