@@ -39,17 +39,17 @@ namespace MeetingGrpc.Server.Services
                     .ToAsyncEnumerable()
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new LobbyMessageResponse
-                        {
-                            Action = x.Action.ToProtosAction(),
-                            LobbyMessage = new LobbyMessage
-                            {
-                                MessageGuid = x.Message.Guid.ToString(),
-                                Message = x.Message.Content,
-                                Time = x.Message.DateTime.ToTimestamp(),
-                                UserGuid = x.Message.User.UserGuid.ToString(),
-                                Username = x.Message.User.Name
-                            }
-                        }, context.CancellationToken))
+                          {
+                              Action = x.Action.ToProtosAction(),
+                              LobbyMessage = new LobbyMessage
+                              {
+                                  MessageGuid = x.Message.Guid.ToString(),
+                                  Message = x.Message.Content,
+                                  Time = x.Message.DateTime.ToTimestamp(),
+                                  UserGuid = x.Message.User.UserGuid.ToString(),
+                                  Username = x.Message.User.Name
+                              }
+                          }, context.CancellationToken))
                     .ConfigureAwait(false);
             }
             catch (TaskCanceledException)
@@ -77,7 +77,7 @@ namespace MeetingGrpc.Server.Services
             return Task.FromResult(empty);
         }
 
-        private User? GetUserFromMetadata(Metadata metadata)
+        private Model.User? GetUserFromMetadata(Metadata metadata)
         {
             if (metadata == null)
                 throw new RpcException(new Status(StatusCode.PermissionDenied, "Permission denied"), metadata);
