@@ -8,7 +8,7 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
         private readonly IRepository<FrameCaptureInfo> _repository;
 
         private event Action<FrameCaptureInfo> FrameCaptureStreamStarted;
-        private event Action<FrameCaptureInfo> FrameCaptureStreamStoped;
+        private event Action<FrameCaptureInfo> FrameCaptureStreamStoped;  
         private event Action<FrameCaptureArea> FrameCaptureUpdated;
 
         public LocalFrameCapturesService(IRepository<FrameCaptureInfo> repository)
