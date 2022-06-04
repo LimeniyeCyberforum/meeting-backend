@@ -11,16 +11,10 @@ package MeetingGrpc.Protos;
 
 service Users 
 { 
-	rpc UsersSubscribe(google.protobuf.Empty) returns (stream UserResponse);
-	rpc RefreshMyOnlineTimer(google.protobuf.Empty) returns (OnlineTimerRefreshResponse);
+	rpc UsersSubscribe(google.protobuf.Empty) returns (stream UserOnlineStatusResponse);
 }
 
-message OnlineTimerRefreshResponse 
-{
-	google.protobuf.Timestamp disqualificationTime = 1;
-}
-
-message UserResponse
+message UserOnlineStatusResponse
 {
 	Action action = 1;
 	User user = 2;
@@ -29,5 +23,5 @@ message UserResponse
 message User
 {
 	string userGuid = 1; 
-	bool isOnline = 2;
+	string name = 2; 
 }
