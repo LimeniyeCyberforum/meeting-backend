@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories;
+using MeetingGrpc.Server.Repositories.LocalServices;
 using System.Reactive.Linq;
 
 namespace MeetingGrpc.Repositories.LocalServices
@@ -17,20 +18,19 @@ namespace MeetingGrpc.Repositories.LocalServices
             _repository = repository;
         }
 
-        private event Action<User> Added;
-        private event Action<User> Removed;
+        private event Action<(EventAction, User)> UsersChanged;
 
         public void Add(User user)
         {
             _repository.Add(user);
-            Added?.Invoke(user);
+            UsersChanged?.Invoke((EventAction.Added, user));
             _logger.LogInformation($"{user.Name}: connected");
         }
 
         public void Remove(User user)
         {
             _repository.Remove(user);
-            Removed?.Invoke(new User(user.UserGuid, user.Name, false, user.Token));
+            UsersChanged?.Invoke((EventAction.Removed, user));
             _logger.LogInformation($"{user.Name}: left");
         }
 
@@ -46,13 +46,12 @@ namespace MeetingGrpc.Repositories.LocalServices
             return user == null ? false : true;
         }
 
-        public IObservable<User> GetUsersAsObservable()
+        public IObservable<(EventAction Action, User User)> GetUsersAsObservable()
         {
-            var oldUsers = _repository.GetAll().ToObservable();
-            var userRemoved = Observable.FromEvent<User>((x) => Removed += x, (x) => Removed -= x);
-            var usedAdded = Observable.FromEvent<User>((x) => Added += x, (x) => Added -= x);
+            var oldUsers = _repository.GetAll().Select(x => (EventAction.Added, x)).ToObservable();
+            var usersChanged = Observable.FromEvent<(EventAction, User)>((x) => UsersChanged += x, (x) => UsersChanged -= x);
 
-            return oldUsers.Concat(userRemoved).Concat(usedAdded);
+            return oldUsers.Concat(usersChanged);
         }
     }
 }

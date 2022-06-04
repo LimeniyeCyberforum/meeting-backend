@@ -2,6 +2,7 @@
 using Grpc.Core;
 using MeetingGrpc.Protos;
 using MeetingGrpc.Repositories.LocalServices;
+using MeetingGrpc.Server.Repositories.LocalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
@@ -23,7 +24,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [AllowAnonymous]
-        public override async Task UsersSubscribe(Empty request, IServerStreamWriter<UserOnline> responseStream, ServerCallContext context)
+        public override async Task UsersSubscribe(Empty request, IServerStreamWriter<UserOnlineStatusResponse> responseStream, ServerCallContext context)
         {
             var peer = context.Peer;
             _logger.LogInformation($"[UsersSubscribe] : {peer} subscribes.");
@@ -35,10 +36,10 @@ namespace MeetingGrpc.Server.Services
                 await _usersService.GetUsersAsObservable()
                     .ToAsyncEnumerable()
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
-                        new UserOnline 
-                        { 
-                            UserGuid = x.UserGuid.ToString(), 
-                            IsOnline = x.IsOnline
+                        new UserOnlineStatusResponse
+                        {
+                            Action = x.Action.ToProtosAction(),
+                            User = new User { Name = x.User.Name, UserGuid = x.User.UserGuid.ToString() }
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
             }
@@ -48,10 +49,10 @@ namespace MeetingGrpc.Server.Services
             }
         }
 
-        [Authorize]
-        public override Task<OnlineTimerRefreshResponse> RefreshMyOnlineTimer(Empty request, ServerCallContext context)
-        {
-            throw new NotFiniteNumberException();
-        }
+        //[Authorize]
+        //public override Task<OnlineTimerRefreshResponse> RefreshMyOnlineTimer(Empty request, ServerCallContext context)
+        //{
+        //    throw new NotFiniteNumberException();
+        //}
     }
 }
