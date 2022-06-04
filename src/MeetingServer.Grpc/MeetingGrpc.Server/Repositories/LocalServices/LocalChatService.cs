@@ -1,4 +1,5 @@
-﻿using MeetingGrpc.Server.Model;
+﻿using MeetingGrpc.Protos;
+using MeetingGrpc.Server.Model;
 using System.Reactive.Linq;
 
 namespace MeetingGrpc.Server.Repositories.LocalServices
@@ -9,13 +10,13 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 
         private readonly IRepository<Message> _repository;
 
+        private event Action<(EventAction Action, Message Message)> Added;
+
         public LocalChatService(ILogger<LocalChatService> logger, IRepository<Message> repository)
         {
             _logger = logger;
             _repository = repository;
         }
-
-        private event Action<Message> Added;
 
         public void Add(Message message)
         {
@@ -23,13 +24,13 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 
             _logger.LogInformation($"{message.User.Name}: {message.Content}\n{message.DateTime}");
 
-            Added?.Invoke(message);
+            Added?.Invoke((EventAction.Added, message));
         }
 
-        public IObservable<Message> GetMessagesAsObservable()
+        public IObservable<(EventAction Action, Message Message)> GetMessagesAsObservable()
         {
-            var oldLogs = _repository.GetAll().ToObservable();
-            var newLogs = Observable.FromEvent<Message>((x) => Added += x, (x) => Added -= x);
+            var oldLogs = _repository.GetAll().Select(x => (EventAction.Added, x)).ToObservable();
+            var newLogs = Observable.FromEvent<(EventAction Action, Message Message)>((x) => Added += x, (x) => Added -= x);
 
             return oldLogs.Concat(newLogs);
         }
