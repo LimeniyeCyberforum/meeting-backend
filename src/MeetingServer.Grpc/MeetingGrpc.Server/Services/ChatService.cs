@@ -26,7 +26,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [AllowAnonymous]
-        public override async Task MessagesSubscribe(Empty request, IServerStreamWriter<LobbyMessage> responseStream, ServerCallContext context)
+        public override async Task MessagesSubscribe(Empty request, IServerStreamWriter<LobbyMessageResponse> responseStream, ServerCallContext context)
         {
             var peer = context.Peer;
             _logger.LogInformation($"{peer} messages subscribes.");
@@ -38,14 +38,18 @@ namespace MeetingGrpc.Server.Services
                 await _chatService.GetMessagesAsObservable()
                     .ToAsyncEnumerable()
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
-                        new LobbyMessage 
+                        new LobbyMessageResponse
                         {
-                            MessageGuid = x.Guid.ToString(),
-                            Message = x.Content,
-                            Time = x.DateTime.ToTimestamp(),
-                            UserGuid = x.User.UserGuid.ToString(),
-                            Username = x.User.Name
-                        }), context.CancellationToken)
+                            Action = x.Action.ToProtosAction(),
+                            LobbyMessage = new LobbyMessage
+                            {
+                                MessageGuid = x.Message.Guid.ToString(),
+                                Message = x.Message.Content,
+                                Time = x.Message.DateTime.ToTimestamp(),
+                                UserGuid = x.Message.User.UserGuid.ToString(),
+                                Username = x.Message.User.Name
+                            }
+                        }, context.CancellationToken))
                     .ConfigureAwait(false);
             }
             catch (TaskCanceledException)
