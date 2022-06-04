@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "common.proto";
 
 option csharp_namespace = "MeetingGrpc.Protos";
 
@@ -10,7 +11,7 @@ package MeetingGrpc.Protos;
 
 service Chat 
 { 
-	rpc MessagesSubscribe(google.protobuf.Empty) returns (stream LobbyMessageAction);
+	rpc MessagesSubscribe(google.protobuf.Empty) returns (stream LobbyMessageResponse);
 	rpc SendMessage(MessageRequest) returns (google.protobuf.Empty);
 }
 
@@ -26,16 +27,9 @@ message MessageResponse
 	google.protobuf.Timestamp time = 2;
 }
 
-enum MessageAction
+message LobbyMessageResponse
 {
-	MESSAGE_ACTION_ADDED = 0;
-	MESSAGE_ACTION_REMOVED = 1;
-	MESSAGE_ACTION_CHANGED = 2;
-}
-
-message LobbyMessageAction
-{
-	MessageAction Action = 1;
+	Action action = 1;
 	LobbyMessage lobbyMessage = 2;
 }
 
