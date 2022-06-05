@@ -20,7 +20,7 @@ message CaptureFrame
 {
 	string catureAreaGuid = 1;
 	bytes bytes = 2;
-	google.timestamp time = 3;
+	google.protobuf.Timestamp time = 3;
 }
 
 message CaptureFrameArea
