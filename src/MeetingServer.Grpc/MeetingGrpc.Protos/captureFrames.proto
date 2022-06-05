@@ -28,8 +28,9 @@ message CaptureFrame
 
 message CaptureFrameArea
 {
-	string catureAreaGuid = 1;
-	bool isOn = 2;
+	string ownerGuid = 1;
+	string catureAreaGuid = 2;
+	bool isOn = 3;
 }
 
 message CreateCaptureAreaResponse

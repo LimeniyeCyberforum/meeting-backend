@@ -78,6 +78,7 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new CaptureFrameArea
                         {
+                            OwnerGuid = x.FrameCaptureInfo.UserGuid.ToString(),
                             IsOn = x.IsOn,
                             CatureAreaGuid = x.FrameCaptureInfo.FrameCaptureAreaGuid.ToString()
                         }), context.CancellationToken)
