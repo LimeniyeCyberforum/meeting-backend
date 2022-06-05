@@ -90,7 +90,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [Authorize]
-        public override Task<Empty> SwitchFrameCaptureState(FrameCaptureState request, ServerCallContext context)
+        public override Task<CreateCaptureAreaResponse> CreateCaptureArea(Empty request, ServerCallContext context)
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
@@ -99,9 +99,11 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(Guid.Parse(request.CatureAreaGuid), user.UserGuid), request.IsOn);
+            Guid newAreaGuid = Guid.NewGuid();
 
-            return Task.FromResult(empty);
+            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(newAreaGuid, user.UserGuid), true);
+
+            return Task.FromResult(new CreateCaptureAreaResponse { AreaGuid = newAreaGuid.ToString() });
         }
 
         private Model.User? GetUserFromMetadata(Metadata metadata)
