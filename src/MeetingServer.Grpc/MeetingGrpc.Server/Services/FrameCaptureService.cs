@@ -64,7 +64,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [AllowAnonymous]
-        public override async Task FrameCaptureStatesSubscribe(Empty request, IServerStreamWriter<FrameCaptureState> responseStream, ServerCallContext context)
+        public override async Task CaptureFrameAreasSubscribe(Empty request, IServerStreamWriter<CaptureFrameArea> responseStream, ServerCallContext context)
         {
             var peer = context.Peer;
             _logger.LogInformation($"{peer} frame captures subscribes.");
@@ -76,10 +76,10 @@ namespace MeetingGrpc.Server.Services
                 await _captureFramesService.CaptureFrameStatesAsObservable()
                     .ToAsyncEnumerable()
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
-                        new FrameCaptureState
+                        new CaptureFrameArea
                         {
                             IsOn = x.IsOn,
-                            CatureAreaGuid = x.FrameCaptureInfo.CaptureFrameDataGuid.ToString()
+                            CatureAreaGuid = x.FrameCaptureInfo.FrameCaptureAreaGuid.ToString()
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
             }
