@@ -3,46 +3,46 @@ using System.Reactive.Linq;
 
 namespace MeetingGrpc.Server.Repositories.LocalServices
 {
-    public class LocalFrameCapturesService
+    public class LocalCaptureFramesService
     {
-        private readonly IRepository<FrameCaptureInfo> _repository;
+        private readonly IRepository<CaptureFrameInfo> _repository;
 
-        private event Action<(bool IsOn, FrameCaptureInfo FrameCaptureInfo)> FrameCaptureStreamChanged;  
-        private event Action<FrameCaptureArea> FrameCaptureUpdated;
+        private event Action<(bool IsOn, CaptureFrameInfo FrameCaptureInfo)> CaptureFrameAreasChanged;  
+        private event Action<CaptureFrameArea> CaptureFrameUpdated;
 
-        public LocalFrameCapturesService(IRepository<FrameCaptureInfo> repository)
+        public LocalCaptureFramesService(IRepository<CaptureFrameInfo> repository)
         {
             _repository = repository;
         }
 
-        public void ShitchFrameCapture(FrameCaptureInfo frameCaptureInfo, bool isOn)
+        public void ShitchCaptureFrame(CaptureFrameInfo captureFrameInfo, bool isOn)
         {
             if (isOn)
             {
-                _repository.Add(frameCaptureInfo);
+                _repository.Add(captureFrameInfo);
             }
             else
             {
-                _repository.Remove(frameCaptureInfo);
+                _repository.Remove(captureFrameInfo);
             }
 
-            FrameCaptureStreamChanged?.Invoke((isOn, frameCaptureInfo));
+            CaptureFrameAreasChanged?.Invoke((isOn, captureFrameInfo));
         }
 
-        public void UpdateFrameCapture(FrameCaptureArea cameraCapture)
+        public void UpdateFrameCapture(CaptureFrameArea cameraCapture)
         {
-            FrameCaptureUpdated?.Invoke(cameraCapture);
+            CaptureFrameUpdated?.Invoke(cameraCapture);
         }
 
-        public IObservable<(bool IsOn, FrameCaptureInfo FrameCaptureInfo)> CaptureFrameStatesAsObservable()
+        public IObservable<(bool IsOn, CaptureFrameInfo FrameCaptureInfo)> CaptureFrameStatesAsObservable()
         {
-            var started = Observable.FromEvent<(bool IsOn, FrameCaptureInfo FrameCaptureInfo)>((x) => FrameCaptureStreamChanged += x, (x) => FrameCaptureStreamChanged -= x);
+            var started = Observable.FromEvent<(bool IsOn, CaptureFrameInfo FrameCaptureInfo)>((x) => CaptureFrameAreasChanged += x, (x) => CaptureFrameAreasChanged -= x);
             return started;
         }
 
-        public IObservable<FrameCaptureArea> FrameCapturesAsObservable()
+        public IObservable<CaptureFrameArea> FrameCapturesAsObservable()
         {
-            var newFrame = Observable.FromEvent<FrameCaptureArea>((x) => FrameCaptureUpdated += x, (x) => FrameCaptureUpdated -= x);
+            var newFrame = Observable.FromEvent<CaptureFrameArea>((x) => CaptureFrameUpdated += x, (x) => CaptureFrameUpdated -= x);
             return newFrame;
         }
     }

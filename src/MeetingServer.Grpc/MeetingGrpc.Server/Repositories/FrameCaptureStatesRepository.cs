@@ -2,21 +2,21 @@
 
 namespace MeetingGrpc.Server.Repositories
 {
-    public class FrameCaptureStatesRepository : IRepository<FrameCaptureInfo>
+    public class FrameCaptureStatesRepository : IRepository<CaptureFrameInfo>
     {
-        private readonly List<FrameCaptureInfo> localStorage = new List<FrameCaptureInfo>(); // dummy on memory storage
+        private readonly List<CaptureFrameInfo> localStorage = new List<CaptureFrameInfo>(); // dummy on memory storage
 
-        public void Add(FrameCaptureInfo message)
+        public void Add(CaptureFrameInfo message)
         {
             localStorage.Add(message);
         }
 
-        public void Remove(FrameCaptureInfo cameraCapture)
+        public void Remove(CaptureFrameInfo cameraCapture)
         {
             localStorage.Remove(cameraCapture);
         }
 
-        public IEnumerable<FrameCaptureInfo> GetAll()
+        public IEnumerable<CaptureFrameInfo> GetAll()
         {
             return localStorage.AsReadOnly();
         }

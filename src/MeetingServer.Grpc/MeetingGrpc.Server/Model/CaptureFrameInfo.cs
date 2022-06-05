@@ -1,11 +1,11 @@
 ﻿namespace MeetingGrpc.Server.Model
 {
-    public class FrameCaptureInfo
+    public class CaptureFrameInfo
     {
         public Guid FrameCaptureAreaGuid { get; }
         public Guid UserGuid { get; }
 
-        public FrameCaptureInfo(Guid frameCaptureAreaGuid, Guid userGuid)
+        public CaptureFrameInfo(Guid frameCaptureAreaGuid, Guid userGuid)
         {
             FrameCaptureAreaGuid = frameCaptureAreaGuid;
             UserGuid = userGuid;

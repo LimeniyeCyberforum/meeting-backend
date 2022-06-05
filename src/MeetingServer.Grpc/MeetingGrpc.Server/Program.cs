@@ -29,12 +29,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddGrpc();
 
 builder.Services.AddSingleton<IRepository<Message>, ChatRepository>();
-builder.Services.AddSingleton<IRepository<FrameCaptureInfo>, FrameCaptureStatesRepository>();
+builder.Services.AddSingleton<IRepository<CaptureFrameInfo>, FrameCaptureStatesRepository>();
 builder.Services.AddSingleton<IRepository<MeetingGrpc.Server.Model.User>, UsersRepository>();
 
 builder.Services.AddSingleton<LocalUsersService>();
 builder.Services.AddSingleton<LocalChatService>();
-builder.Services.AddSingleton<LocalFrameCapturesService>();
+builder.Services.AddSingleton<LocalCaptureFramesService>();
 
 var app = builder.Build();
 
@@ -45,7 +45,7 @@ app.UseAuthorization();
 app.MapGrpcService<UsersService>().EnableGrpcWeb();
 app.MapGrpcService<AuthorizationService>().EnableGrpcWeb();
 app.MapGrpcService<ChatService>().EnableGrpcWeb();
-app.MapGrpcService<FrameCaptureService>().EnableGrpcWeb();
+app.MapGrpcService<CaptureFramesService>().EnableGrpcWeb();
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
