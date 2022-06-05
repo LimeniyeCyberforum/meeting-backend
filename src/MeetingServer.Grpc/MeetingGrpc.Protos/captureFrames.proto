@@ -13,7 +13,10 @@ service CaptureFrames
 	rpc SendCaptureFrame(CaptureFrame) returns (google.protobuf.Empty);
 
 	rpc CaptureFrameAreasSubscribe(google.protobuf.Empty) returns (stream CaptureFrameArea);
-	rpc SwitchCaptureFrameArea(CaptureFrameArea) returns (google.protobuf.Empty);
+
+	rpc CreateCaptureArea(google.protobuf.Empty) returns (CreateCaptureAreaResponse);
+	rpc DestroyCaptureArea(DestroyCaptureAreaRequest) returns (google.protobuf.Empty);
+
 }
 
 message CaptureFrame
@@ -27,4 +30,14 @@ message CaptureFrameArea
 {
 	string catureAreaGuid = 1;
 	bool isOn = 2;
+}
+
+message CreateCaptureAreaResponse
+{
+	string areaGuid = 1;
+}
+
+message DestroyCaptureAreaRequest
+{
+	string areaGuid = 1;
 }
