@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "MeetingGrpc.Protos";
+
+package MeetingGrpc.Protos;
+
+service CaptureFrames 
+{ 
+	rpc CaptureFramesSubscribe(google.protobuf.Empty) returns (stream CaptureFrame);
+	rpc SendCaptureFrame(CaptureFrame) returns (google.protobuf.Empty);
+
+	rpc CaptureFrameAreasSubscribe(google.protobuf.Empty) returns (stream CaptureFrameArea);
+	rpc SwitchCaptureFrameArea(CaptureFrameArea) returns (google.protobuf.Empty);
+}
+
+message CaptureFrame
+{
+	string catureAreaGuid = 1;
+	bytes bytes = 2;
+	google.timestamp time = 3;
+}
+
+message CaptureFrameArea
+{
+	string catureAreaGuid = 1;
+	bool isOn = 2;
+}
