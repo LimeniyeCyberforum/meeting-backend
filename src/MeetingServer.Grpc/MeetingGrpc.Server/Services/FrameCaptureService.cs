@@ -104,6 +104,21 @@ namespace MeetingGrpc.Server.Services
             _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(newAreaGuid, user.UserGuid), true);
 
             return Task.FromResult(new CreateCaptureAreaResponse { AreaGuid = newAreaGuid.ToString() });
+        }        
+        
+        [Authorize]
+        public override Task<Empty> DestroyCaptureArea(DestroyCaptureAreaRequest request, ServerCallContext context)
+        {
+            _logger.LogInformation($"{context.Peer} {request}");
+
+            var user = GetUserFromMetadata(context.RequestHeaders);
+
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
+
+            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(Guid.Parse(request.AreaGuid), user.UserGuid), false);
+
+            return Task.FromResult(empty);
         }
 
         private Model.User? GetUserFromMetadata(Metadata metadata)
