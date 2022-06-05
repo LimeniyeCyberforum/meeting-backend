@@ -25,7 +25,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [AllowAnonymous]
-        public override async Task FrameCapturesSubscribe(Empty request, IServerStreamWriter<UserFrameCapture> responseStream, ServerCallContext context)
+        public override async Task CaptureFramesSubscribe(Empty request, IServerStreamWriter<CaptureFrame> responseStream, ServerCallContext context)
         {
             var peer = context.Peer;
             _logger.LogInformation($"{peer} frame captures subscribes.");
@@ -39,7 +39,7 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new UserFrameCapture
                         {
-                            CatureAreaGuid = x.FrameCaptureAreaGuid.ToString(),
+                            CatureAreaGuid = x.CaptureFrameDataGuid.ToString(),
                             CaptureFrame = Google.Protobuf.ByteString.CopyFrom(x.Data)
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
@@ -51,14 +51,14 @@ namespace MeetingGrpc.Server.Services
         }
 
         [Authorize]
-        public override Task<Empty> SendFrameCapture(FrameCaptureRequest request, ServerCallContext context)
+        public override Task<Empty> SendCaptureFrame(CaptureFrame request, ServerCallContext context)
         {
             var user = GetUserFromMetadata(context.RequestHeaders);
 
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.UpdateFrameCapture(new FrameCaptureArea(Guid.Parse(request.CatureAreaGuid), user.UserGuid, request.CaptureFrame.ToByteArray()));
+            _captureFramesService.UpdateFrameCapture(new CaptureFrameData(Guid.Parse(request.CatureAreaGuid), user.UserGuid, request.Bytes.ToByteArray()));
 
             return Task.FromResult(empty);
         }
@@ -79,7 +79,7 @@ namespace MeetingGrpc.Server.Services
                         new FrameCaptureState
                         {
                             IsOn = x.IsOn,
-                            CatureAreaGuid = x.FrameCaptureInfo.FrameCaptureAreaGuid.ToString()
+                            CatureAreaGuid = x.FrameCaptureInfo.CaptureFrameDataGuid.ToString()
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
             }
@@ -99,7 +99,7 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.ShitchFrameCapture(new CaptureFrameInfo(Guid.Parse(request.CatureAreaGuid), user.UserGuid), request.IsOn);
+            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(Guid.Parse(request.CatureAreaGuid), user.UserGuid), request.IsOn);
 
             return Task.FromResult(empty);
         }
