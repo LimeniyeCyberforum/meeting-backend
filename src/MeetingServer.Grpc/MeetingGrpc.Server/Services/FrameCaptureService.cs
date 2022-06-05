@@ -37,10 +37,10 @@ namespace MeetingGrpc.Server.Services
                 await _captureFramesService.FrameCapturesAsObservable()
                     .ToAsyncEnumerable()
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
-                        new UserFrameCapture
+                        new CaptureFrame
                         {
-                            CatureAreaGuid = x.CaptureFrameDataGuid.ToString(),
-                            CaptureFrame = Google.Protobuf.ByteString.CopyFrom(x.Data)
+                            CatureAreaGuid = x.FrameCaptureAreaGuid.ToString(),
+                            Bytes = Google.Protobuf.ByteString.CopyFrom(x.Data)
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
             }
