@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MeetingGrpc.Repositories.LocalServices;
 using User = MeetingGrpc.Server.Model.User;
+using MeetingGrpc.Server.Repositories.LocalServices;
 
 namespace MeetingGrpc.Server.Services
 {
@@ -20,14 +21,14 @@ namespace MeetingGrpc.Server.Services
         private readonly IConfiguration _configuration;
 
         private readonly LocalUsersService _usersService;
+        private readonly LocalCaptureFramesService _captureFramesService;
 
-        //private readonly UsersCameraCaptureService _usersCameraCaptureService;
-
-        public AuthorizationService(ILogger<AuthorizationService> logger, IConfiguration configuration, LocalUsersService usersService)
+        public AuthorizationService(ILogger<AuthorizationService> logger, IConfiguration configuration, LocalUsersService usersService, LocalCaptureFramesService captureFramesService)
         {
             _logger = logger;
             _configuration = configuration;
             _usersService = usersService;
+            _captureFramesService = captureFramesService;
             //_chatService = loggerTest;
             //_usersCameraCaptureService = usersCameraCaptureService;
         }
@@ -60,9 +61,8 @@ namespace MeetingGrpc.Server.Services
             var userRoles = new List<string> { "User" };
             var token = GetJwtToken(newUserNotFull, userRoles);
             var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, token);
-
-
             _usersService.Add(userFull);
+            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(userFull.UserGuid, userFull.UserGuid), true);
 
             return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUserNotFull.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }
