@@ -39,6 +39,7 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new CaptureFrame
                         {
+                            Time = x.DateTime.ToTimestamp(),
                             CatureAreaGuid = x.FrameCaptureAreaGuid.ToString(),
                             Bytes = Google.Protobuf.ByteString.CopyFrom(x.Data)
                         }), context.CancellationToken)
@@ -58,7 +59,7 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.UpdateFrameCapture(new CaptureFrameData(Guid.Parse(request.CatureAreaGuid), user.UserGuid, request.Bytes.ToByteArray()));
+            _captureFramesService.UpdateFrameCapture(new CaptureFrameData(Guid.Parse(request.CatureAreaGuid), user.UserGuid, request.Bytes.ToByteArray(), request.Time.ToDateTime()));
 
             return Task.FromResult(empty);
         }

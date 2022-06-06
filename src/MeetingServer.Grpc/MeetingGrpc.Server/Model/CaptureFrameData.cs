@@ -3,11 +3,13 @@
     public class CaptureFrameData : CaptureFrameInfo
     {
         public byte[] Data { get; }
+        public DateTime DateTime { get; }
 
-        public CaptureFrameData(Guid frameCaptureAreaGuid, Guid userGuid, byte[] data)
+        public CaptureFrameData(Guid frameCaptureAreaGuid, Guid userGuid, byte[] data, DateTime dateTime)
             : base(frameCaptureAreaGuid, userGuid)
         {
             Data = data;
+            DateTime = dateTime;
         }
     }
 }
