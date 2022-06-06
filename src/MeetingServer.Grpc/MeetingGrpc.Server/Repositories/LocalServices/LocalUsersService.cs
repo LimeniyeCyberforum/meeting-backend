@@ -36,7 +36,8 @@ namespace MeetingGrpc.Repositories.LocalServices
 
         public User? GetUserFromToken(string token)
         {
-           return _repository.GetAll().FirstOrDefault(x => string.Equals(x.Token?.JwtToken, token));
+            var onlyToken = token.Replace("Bearer ", string.Empty);
+           return _repository.GetAll().FirstOrDefault(x => string.Equals(x.Token?.JwtToken, onlyToken));
         }
 
         public bool IsNameExists(string? name)
