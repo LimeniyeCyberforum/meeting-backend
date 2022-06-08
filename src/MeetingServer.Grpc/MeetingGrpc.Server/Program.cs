@@ -27,6 +27,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddAuthorization();
 builder.Services.AddGrpc();
+builder.Services.AddGrpc();
+//builder.Services.AddWebEncoders();
+//builder.Services.AddGrpcWeb(o => o.GrpcWebEnabled = true);
 
 builder.Services.AddSingleton<IRepository<Message>, ChatRepository>();
 builder.Services.AddSingleton<IRepository<CaptureFrameInfo>, FrameCaptureStatesRepository>();
@@ -38,10 +41,14 @@ builder.Services.AddSingleton<LocalCaptureFramesService>();
 
 var app = builder.Build();
 
-app.UseGrpcWeb();
-app.UseAuthentication();
+app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseGrpcWeb();
 app.MapGrpcService<UsersService>().EnableGrpcWeb();
 app.MapGrpcService<AuthorizationService>().EnableGrpcWeb();
 app.MapGrpcService<ChatService>().EnableGrpcWeb();
