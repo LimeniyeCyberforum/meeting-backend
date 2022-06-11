@@ -1,4 +1,5 @@
-﻿using MeetingGrpc.Server.Model;
+﻿using Google.Protobuf.WellKnownTypes;
+using MeetingGrpc.Server.Model;
 using System.Reactive.Linq;
 
 namespace MeetingGrpc.Server.Repositories.LocalServices
@@ -15,7 +16,7 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             _repository = repository;
         }
 
-        public void SwitchCaptureFrame(ValueActionInfo<CaptureFrameInfo> captureFrameInfo, bool isOn)
+        public void SwitchCaptureFrame(ValueActionInfo<CaptureFrameInfo> captureFrameInfo, bool isOn, bool isStandardCaptureArea)
         {
             if (isOn)
             {
@@ -23,7 +24,10 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             }
             else
             {
-                _repository.Remove(captureFrameInfo);
+                if (!isStandardCaptureArea)
+                {
+                    _repository.Remove(captureFrameInfo);
+                }
             }
 
             CaptureFrameAreasChanged?.Invoke((isOn, captureFrameInfo));

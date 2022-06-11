@@ -90,6 +90,10 @@ namespace MeetingGrpc.Server.Services
             {
                 _logger.LogError($"{peer} frame captures unsubscribed.");
             }
+            catch(Exception ex)
+            {
+                _logger.LogError($"{peer} frame captures unsubscribed. Was some error: {ex}");
+            }
         }
 
         [Authorize]
@@ -104,7 +108,7 @@ namespace MeetingGrpc.Server.Services
 
             Guid newAreaGuid = Guid.NewGuid();
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(newAreaGuid, user.UserGuid), request.ToDateTime()), true);
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(newAreaGuid, user.UserGuid), request.ToDateTime()), true, user.UserGuid == newAreaGuid);
 
             return Task.FromResult(new CreateCaptureAreaResponse { AreaGuid = newAreaGuid.ToString() });
         }        
@@ -119,7 +123,9 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(Guid.Parse(request.AreaGuid), user.UserGuid), request.Time.ToDateTime()), false);
+            var captureAreaGuid = Guid.Parse(request.AreaGuid);
+
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), false, user.UserGuid == captureAreaGuid);
 
             return Task.FromResult(empty);
         }
