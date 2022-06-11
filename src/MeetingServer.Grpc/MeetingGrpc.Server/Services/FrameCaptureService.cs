@@ -49,6 +49,10 @@ namespace MeetingGrpc.Server.Services
             {
                 _logger.LogError($"{peer} frame captures unsubscribed.");
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{peer} frame captures unsubscribed. Was some error: {ex}");
+            }
         }
 
         [Authorize]
@@ -80,7 +84,7 @@ namespace MeetingGrpc.Server.Services
                         new CaptureFrameArea
                         {
                             OwnerGuid = x.FrameCaptureInfo.Value.UserGuid.ToString(),
-                            IsOn = x.IsOn,
+                            Action = (CaptureStateAction)x.Action,
                             CatureAreaGuid = x.FrameCaptureInfo.Value.FrameCaptureAreaGuid.ToString(),
                             Time = x.FrameCaptureInfo.DateTime.ToTimestamp()
                         }), context.CancellationToken)
@@ -108,13 +112,13 @@ namespace MeetingGrpc.Server.Services
 
             Guid newAreaGuid = Guid.NewGuid();
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(newAreaGuid, user.UserGuid), request.ToDateTime()), true, user.UserGuid == newAreaGuid);
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(newAreaGuid, user.UserGuid), request.ToDateTime()), CaptureFrameState.Created);
 
             return Task.FromResult(new CreateCaptureAreaResponse { AreaGuid = newAreaGuid.ToString() });
         }        
         
         [Authorize]
-        public override Task<Empty> DestroyCaptureArea(DestroyCaptureAreaRequest request, ServerCallContext context)
+        public override Task<Empty> DestroyCaptureArea(CaptureAreaRequest request, ServerCallContext context)
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
@@ -125,7 +129,41 @@ namespace MeetingGrpc.Server.Services
 
             var captureAreaGuid = Guid.Parse(request.AreaGuid);
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), false, user.UserGuid == captureAreaGuid);
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), CaptureFrameState.Removed);
+
+            return Task.FromResult(empty);
+        }
+
+        [Authorize]
+        public override Task<Empty> TurnOnCaptureArea(CaptureAreaRequest request, ServerCallContext context)
+        {
+            _logger.LogInformation($"{context.Peer} {request}");
+
+            var user = GetUserFromMetadata(context.RequestHeaders);
+
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
+
+            var captureAreaGuid = Guid.Parse(request.AreaGuid);
+
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), CaptureFrameState.Enabled);
+
+            return Task.FromResult(empty);
+        }
+
+        [Authorize]
+        public override Task<Empty> TurnOffCaptureArea(CaptureAreaRequest request, ServerCallContext context)
+        {
+            _logger.LogInformation($"{context.Peer} {request}");
+
+            var user = GetUserFromMetadata(context.RequestHeaders);
+
+            if (user == null)
+                throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
+
+            var captureAreaGuid = Guid.Parse(request.AreaGuid);
+
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), CaptureFrameState.Disabled);
 
             return Task.FromResult(empty);
         }
