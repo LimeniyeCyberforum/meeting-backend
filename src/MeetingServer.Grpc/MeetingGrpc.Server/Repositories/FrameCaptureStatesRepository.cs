@@ -20,5 +20,10 @@ namespace MeetingGrpc.Server.Repositories
         {
             return localStorage.AsReadOnly();
         }
+
+        public void Update(ValueActionInfo<CaptureFrameInfo> obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

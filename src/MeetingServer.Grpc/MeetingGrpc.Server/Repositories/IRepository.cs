@@ -6,6 +6,7 @@ namespace MeetingGrpc.Server.Repositories
     {
         void Add(T obj);
         void Remove(T obj);
+        void Update(T obj);
         IEnumerable<T> GetAll();
     }
 }

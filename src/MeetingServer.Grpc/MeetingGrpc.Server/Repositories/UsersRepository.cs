@@ -20,5 +20,10 @@ namespace MeetingGrpc.Server.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public void Update(User obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

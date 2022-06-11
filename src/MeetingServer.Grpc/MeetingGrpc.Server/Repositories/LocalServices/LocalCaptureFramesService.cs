@@ -34,6 +34,9 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
                 case CaptureFrameState.Removed:
                     _repository.Remove(captureFrameInfo);
                     break;
+                default:
+                    _repository.Update(captureFrameInfo);
+                    break;
             }
             CaptureFrameAreasChanged?.Invoke((newState, captureFrameInfo));
         }
