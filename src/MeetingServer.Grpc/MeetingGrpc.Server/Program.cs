@@ -32,7 +32,7 @@ builder.Services.AddGrpc();
 //builder.Services.AddGrpcWeb(o => o.GrpcWebEnabled = true);
 
 builder.Services.AddSingleton<IRepository<Message>, ChatRepository>();
-builder.Services.AddSingleton<IRepository<CaptureFrameInfo>, FrameCaptureStatesRepository>();
+builder.Services.AddSingleton<IRepository<ValueActionInfo<CaptureFrameInfo>>, FrameCaptureStatesRepository>();
 builder.Services.AddSingleton<IRepository<MeetingGrpc.Server.Model.User>, UsersRepository>();
 
 builder.Services.AddSingleton<LocalUsersService>();

@@ -79,9 +79,10 @@ namespace MeetingGrpc.Server.Services
                     .ForEachAwaitAsync(async (x) => await responseStream.WriteAsync(
                         new CaptureFrameArea
                         {
-                            OwnerGuid = x.FrameCaptureInfo.UserGuid.ToString(),
+                            OwnerGuid = x.FrameCaptureInfo.Value.UserGuid.ToString(),
                             IsOn = x.IsOn,
-                            CatureAreaGuid = x.FrameCaptureInfo.FrameCaptureAreaGuid.ToString()
+                            CatureAreaGuid = x.FrameCaptureInfo.Value.FrameCaptureAreaGuid.ToString(),
+                            Time = x.FrameCaptureInfo.DateTime.ToTimestamp()
                         }), context.CancellationToken)
                     .ConfigureAwait(false);
             }
@@ -92,7 +93,7 @@ namespace MeetingGrpc.Server.Services
         }
 
         [Authorize]
-        public override Task<CreateCaptureAreaResponse> CreateCaptureArea(Empty request, ServerCallContext context)
+        public override Task<CreateCaptureAreaResponse> CreateCaptureArea(Timestamp request, ServerCallContext context)
         {
             _logger.LogInformation($"{context.Peer} {request}");
 
@@ -103,7 +104,7 @@ namespace MeetingGrpc.Server.Services
 
             Guid newAreaGuid = Guid.NewGuid();
 
-            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(newAreaGuid, user.UserGuid), true);
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(newAreaGuid, user.UserGuid), request.ToDateTime()), true);
 
             return Task.FromResult(new CreateCaptureAreaResponse { AreaGuid = newAreaGuid.ToString() });
         }        
@@ -118,7 +119,7 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(Guid.Parse(request.AreaGuid), user.UserGuid), false);
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(Guid.Parse(request.AreaGuid), user.UserGuid), request.Time.ToDateTime()), false);
 
             return Task.FromResult(empty);
         }

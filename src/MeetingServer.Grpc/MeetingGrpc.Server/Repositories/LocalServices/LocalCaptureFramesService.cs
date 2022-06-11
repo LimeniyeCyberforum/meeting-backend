@@ -5,17 +5,17 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 {
     public class LocalCaptureFramesService
     {
-        private readonly IRepository<CaptureFrameInfo> _repository;
+        private readonly IRepository<ValueActionInfo<CaptureFrameInfo>> _repository;
 
-        private event Action<(bool IsOn, CaptureFrameInfo FrameCaptureInfo)> CaptureFrameAreasChanged;  
+        private event Action<(bool IsOn, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameAreasChanged;  
         private event Action<CaptureFrameData> CaptureFrameUpdated;
 
-        public LocalCaptureFramesService(IRepository<CaptureFrameInfo> repository)
+        public LocalCaptureFramesService(IRepository<ValueActionInfo<CaptureFrameInfo>> repository)
         {
             _repository = repository;
         }
 
-        public void SwitchCaptureFrame(CaptureFrameInfo captureFrameInfo, bool isOn)
+        public void SwitchCaptureFrame(ValueActionInfo<CaptureFrameInfo> captureFrameInfo, bool isOn)
         {
             if (isOn)
             {
@@ -34,9 +34,9 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             CaptureFrameUpdated?.Invoke(cameraCapture);
         }
 
-        public IObservable<(bool IsOn, CaptureFrameInfo FrameCaptureInfo)> CaptureFrameStatesAsObservable()
+        public IObservable<(bool IsOn, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameStatesAsObservable()
         {
-            var started = Observable.FromEvent<(bool IsOn, CaptureFrameInfo FrameCaptureInfo)>((x) => CaptureFrameAreasChanged += x, (x) => CaptureFrameAreasChanged -= x);
+            var started = Observable.FromEvent<(bool IsOn, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)>((x) => CaptureFrameAreasChanged += x, (x) => CaptureFrameAreasChanged -= x);
             return started;
         }
 

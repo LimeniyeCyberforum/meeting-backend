@@ -62,7 +62,7 @@ namespace MeetingGrpc.Server.Services
             var token = GetJwtToken(newUserNotFull, userRoles);
             var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, token);
             _usersService.Add(userFull);
-            _captureFramesService.SwitchCaptureFrame(new CaptureFrameInfo(userFull.UserGuid, userFull.UserGuid), true);
+            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(userFull.UserGuid, userFull.UserGuid), new DateTime()), true);
 
             return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUserNotFull.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }
@@ -95,8 +95,8 @@ namespace MeetingGrpc.Server.Services
             return new[]
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddHours(8)).ToUnixTimeSeconds().ToString()),
+                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()),
+                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.UtcNow.AddHours(8)).ToUnixTimeSeconds().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iss, issuer),
                 new Claim(JwtRegisteredClaimNames.Aud, audience)
             };
