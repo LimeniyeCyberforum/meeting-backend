@@ -4,11 +4,19 @@ using System.Reactive.Linq;
 
 namespace MeetingGrpc.Server.Repositories.LocalServices
 {
+    public enum CaptureFrameState
+    {
+        Disabled,
+        Enabled,
+        Created,
+        Removed
+    }
+
     public class LocalCaptureFramesService
     {
         private readonly IRepository<ValueActionInfo<CaptureFrameInfo>> _repository;
 
-        private event Action<(bool IsOn, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameAreasChanged;  
+        private event Action<(CaptureFrameState Action, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameAreasChanged;  
         private event Action<CaptureFrameData> CaptureFrameUpdated;
 
         public LocalCaptureFramesService(IRepository<ValueActionInfo<CaptureFrameInfo>> repository)
@@ -16,21 +24,18 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             _repository = repository;
         }
 
-        public void SwitchCaptureFrame(ValueActionInfo<CaptureFrameInfo> captureFrameInfo, bool isOn, bool isStandardCaptureArea)
+        public void SwitchCaptureFrame(ValueActionInfo<CaptureFrameInfo> captureFrameInfo, CaptureFrameState newState)
         {
-            if (isOn)
+            switch (newState)
             {
-                _repository.Add(captureFrameInfo);
-            }
-            else
-            {
-                if (!isStandardCaptureArea)
-                {
+                case CaptureFrameState.Created:
+                    _repository.Add(captureFrameInfo);
+                    break;
+                case CaptureFrameState.Removed:
                     _repository.Remove(captureFrameInfo);
-                }
+                    break;
             }
-
-            CaptureFrameAreasChanged?.Invoke((isOn, captureFrameInfo));
+            CaptureFrameAreasChanged?.Invoke((newState, captureFrameInfo));
         }
 
         public void UpdateFrameCapture(CaptureFrameData cameraCapture)
@@ -38,9 +43,9 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
             CaptureFrameUpdated?.Invoke(cameraCapture);
         }
 
-        public IObservable<(bool IsOn, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameStatesAsObservable()
+        public IObservable<(CaptureFrameState Action, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameStatesAsObservable()
         {
-            var started = Observable.FromEvent<(bool IsOn, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)>((x) => CaptureFrameAreasChanged += x, (x) => CaptureFrameAreasChanged -= x);
+            var started = Observable.FromEvent<(CaptureFrameState Action, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)>((x) => CaptureFrameAreasChanged += x, (x) => CaptureFrameAreasChanged -= x);
             return started;
         }
 
