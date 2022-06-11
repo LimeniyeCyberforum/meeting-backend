@@ -2,11 +2,11 @@
 
 namespace MeetingGrpc.Server.Repositories
 {
-    public interface IRepository<T>
+    public interface IRepository<TKey, TValue>
     {
-        void Add(T obj);
-        void Remove(T obj);
-        void Update(T obj);
-        IEnumerable<T> GetAll();
+        void Add(TKey key, TValue obj);
+        void Remove(TKey key);
+        void Update(TKey key, TValue value);
+        IEnumerable<TValue> GetAll();
     }
 }

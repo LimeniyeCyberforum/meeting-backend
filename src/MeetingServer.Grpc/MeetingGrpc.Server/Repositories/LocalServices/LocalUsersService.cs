@@ -1,5 +1,4 @@
-﻿using Grpc.Core;
-using MeetingGrpc.Server.Model;
+﻿using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories;
 using MeetingGrpc.Server.Repositories.LocalServices;
 using System.Reactive.Linq;
@@ -10,9 +9,9 @@ namespace MeetingGrpc.Repositories.LocalServices
     {
         private readonly ILogger<LocalUsersService> _logger;
 
-        private readonly IRepository<User> _repository;
+        private readonly IRepository<Guid, User> _repository;
 
-        public LocalUsersService(ILogger<LocalUsersService> logger, IRepository<User> repository)
+        public LocalUsersService(ILogger<LocalUsersService> logger, IRepository<Guid, User> repository)
         {
             _logger = logger;
             _repository = repository;
@@ -22,14 +21,14 @@ namespace MeetingGrpc.Repositories.LocalServices
 
         public void Add(User user)
         {
-            _repository.Add(user);
+            _repository.Add(user.UserGuid, user);
             UsersChanged?.Invoke((EventAction.Added, user));
             _logger.LogInformation($"{user.Name}: connected");
         }
 
         public void Remove(User user)
         {
-            _repository.Remove(user);
+            _repository.Remove(user.UserGuid);
             UsersChanged?.Invoke((EventAction.Removed, user));
             _logger.LogInformation($"{user.Name}: left");
         }

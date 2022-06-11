@@ -14,31 +14,35 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 
     public class LocalCaptureFramesService
     {
-        private readonly IRepository<ValueActionInfo<CaptureFrameInfo>> _repository;
+        private readonly IRepository<Guid, ValueActionInfo<CaptureFrameInfo>> _repository;
 
         private event Action<(CaptureFrameState Action, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameAreasChanged;  
         private event Action<CaptureFrameData> CaptureFrameUpdated;
 
-        public LocalCaptureFramesService(IRepository<ValueActionInfo<CaptureFrameInfo>> repository)
+        public LocalCaptureFramesService(IRepository<Guid, ValueActionInfo<CaptureFrameInfo>> repository)
         {
             _repository = repository;
         }
 
-        public void SwitchCaptureFrame(ValueActionInfo<CaptureFrameInfo> captureFrameInfo, CaptureFrameState newState)
+        public void CreateArea(Guid captureAreaGuid, Guid userGuid, DateTime time)
         {
-            switch (newState)
-            {
-                case CaptureFrameState.Created:
-                    _repository.Add(captureFrameInfo);
-                    break;
-                case CaptureFrameState.Removed:
-                    _repository.Remove(captureFrameInfo);
-                    break;
-                default:
-                    _repository.Update(captureFrameInfo);
-                    break;
-            }
-            CaptureFrameAreasChanged?.Invoke((newState, captureFrameInfo));
+            var newArea = new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, userGuid, false), time);
+            _repository.Add(newArea.Value.FrameCaptureAreaGuid, newArea);
+            CaptureFrameAreasChanged?.Invoke((CaptureFrameState.Created, newArea));
+        }
+
+        public void RemoveArea(Guid captureAreaGuid, Guid userGuid, DateTime time)
+        {
+            var removedAread = new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, userGuid, false), time);
+            _repository.Remove(captureAreaGuid);
+            CaptureFrameAreasChanged?.Invoke((CaptureFrameState.Removed, removedAread));
+        }
+
+        public void SwitchCaptureFrame(Guid captureAreaGuid, Guid userGuid, DateTime time, bool isActive)
+        {
+            var updatedValue = new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, userGuid, isActive), time);
+            _repository.Update(captureAreaGuid, updatedValue);
+            CaptureFrameAreasChanged?.Invoke((isActive? CaptureFrameState.Enabled : CaptureFrameState.Disabled, updatedValue));
         }
 
         public void UpdateFrameCapture(CaptureFrameData cameraCapture)
@@ -48,14 +52,15 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 
         public IObservable<(CaptureFrameState Action, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)> CaptureFrameStatesAsObservable()
         {
+            var allElements = _repository.GetAll().Select(x => (x.Value.IsActive ? CaptureFrameState.Enabled : CaptureFrameState.Disabled, x)).ToObservable();
             var started = Observable.FromEvent<(CaptureFrameState Action, ValueActionInfo<CaptureFrameInfo> FrameCaptureInfo)>((x) => CaptureFrameAreasChanged += x, (x) => CaptureFrameAreasChanged -= x);
-            return started;
+            return allElements.Concat(started);
         }
 
         public IObservable<CaptureFrameData> FrameCapturesAsObservable()
         {
-            var newFrame = Observable.FromEvent<CaptureFrameData>((x) => CaptureFrameUpdated += x, (x) => CaptureFrameUpdated -= x);
-            return newFrame;
+            var newChanges = Observable.FromEvent<CaptureFrameData>((x) => CaptureFrameUpdated += x, (x) => CaptureFrameUpdated -= x);
+            return newChanges;
         }
     }
 }

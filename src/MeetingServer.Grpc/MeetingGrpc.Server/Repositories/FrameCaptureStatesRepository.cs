@@ -2,28 +2,35 @@
 
 namespace MeetingGrpc.Server.Repositories
 {
-    public class FrameCaptureStatesRepository : IRepository<ValueActionInfo<CaptureFrameInfo>>
+    public class FrameCaptureStatesRepository : IRepository<Guid, ValueActionInfo<CaptureFrameInfo>>
     {
-        private readonly List<ValueActionInfo<CaptureFrameInfo>> localStorage = new List<ValueActionInfo<CaptureFrameInfo>>(); // dummy on memory storage
+        private readonly Dictionary<Guid, ValueActionInfo<CaptureFrameInfo>> localStorage = new Dictionary<Guid, ValueActionInfo<CaptureFrameInfo>>(); // dummy on memory storage
 
-        public void Add(ValueActionInfo<CaptureFrameInfo> message)
+        public void Add(Guid key, ValueActionInfo<CaptureFrameInfo> message)
         {
-            localStorage.Add(message);
+            localStorage.Add(key, message);
         }
 
-        public void Remove(ValueActionInfo<CaptureFrameInfo> cameraCapture)
+        public void Remove(Guid key)
         {
-            localStorage.Remove(cameraCapture);
+            localStorage.Remove(key);
+        }
+
+        public void Update(Guid key, ValueActionInfo<CaptureFrameInfo> newValue)
+        {
+            if (localStorage.ContainsKey(key))
+            {
+                localStorage[key] = newValue;
+            }
+            else
+            {
+                // TODO : Should be loggs 
+            }
         }
 
         public IEnumerable<ValueActionInfo<CaptureFrameInfo>> GetAll()
         {
-            return localStorage.AsReadOnly();
-        }
-
-        public void Update(ValueActionInfo<CaptureFrameInfo> obj)
-        {
-            throw new NotImplementedException();
+            return localStorage.Values.AsEnumerable();
         }
     }
 }

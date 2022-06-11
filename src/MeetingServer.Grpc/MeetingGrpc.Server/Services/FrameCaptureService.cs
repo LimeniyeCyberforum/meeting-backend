@@ -63,7 +63,7 @@ namespace MeetingGrpc.Server.Services
             if (user == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"), context.RequestHeaders);
 
-            _captureFramesService.UpdateFrameCapture(new CaptureFrameData(Guid.Parse(request.CatureAreaGuid), user.UserGuid, request.Bytes.ToByteArray(), request.Time.ToDateTime()));
+            _captureFramesService.UpdateFrameCapture(new CaptureFrameData(Guid.Parse(request.CatureAreaGuid), user.UserGuid, request.Bytes.ToByteArray(), request.Time.ToDateTime(), true));
 
             return Task.FromResult(empty);
         }
@@ -112,7 +112,7 @@ namespace MeetingGrpc.Server.Services
 
             Guid newAreaGuid = Guid.NewGuid();
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(newAreaGuid, user.UserGuid), request.ToDateTime()), CaptureFrameState.Created);
+            _captureFramesService.CreateArea(newAreaGuid, user.UserGuid, request.ToDateTime());
 
             return Task.FromResult(new CreateCaptureAreaResponse { AreaGuid = newAreaGuid.ToString() });
         }        
@@ -129,7 +129,7 @@ namespace MeetingGrpc.Server.Services
 
             var captureAreaGuid = Guid.Parse(request.AreaGuid);
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), CaptureFrameState.Removed);
+            _captureFramesService.RemoveArea(captureAreaGuid, user.UserGuid, request.Time.ToDateTime());
 
             return Task.FromResult(empty);
         }
@@ -146,7 +146,7 @@ namespace MeetingGrpc.Server.Services
 
             var captureAreaGuid = Guid.Parse(request.AreaGuid);
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), CaptureFrameState.Enabled);
+            _captureFramesService.SwitchCaptureFrame(captureAreaGuid, user.UserGuid, request.Time.ToDateTime(), true);
 
             return Task.FromResult(empty);
         }
@@ -163,7 +163,7 @@ namespace MeetingGrpc.Server.Services
 
             var captureAreaGuid = Guid.Parse(request.AreaGuid);
 
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(captureAreaGuid, user.UserGuid), request.Time.ToDateTime()), CaptureFrameState.Disabled);
+            _captureFramesService.SwitchCaptureFrame(captureAreaGuid, user.UserGuid, request.Time.ToDateTime(), false);
 
             return Task.FromResult(empty);
         }

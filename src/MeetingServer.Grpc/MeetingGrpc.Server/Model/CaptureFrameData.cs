@@ -5,8 +5,8 @@
         public byte[] Data { get; }
         public DateTime DateTime { get; }
 
-        public CaptureFrameData(Guid frameCaptureAreaGuid, Guid userGuid, byte[] data, DateTime dateTime)
-            : base(frameCaptureAreaGuid, userGuid)
+        public CaptureFrameData(Guid frameCaptureAreaGuid, Guid userGuid, byte[] data, DateTime dateTime, bool isActive)
+            : base(frameCaptureAreaGuid, userGuid, isActive)
         {
             Data = data;
             DateTime = dateTime;

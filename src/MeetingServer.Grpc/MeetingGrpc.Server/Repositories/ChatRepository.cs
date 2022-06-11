@@ -4,28 +4,28 @@ using System.ComponentModel.Composition;
 
 namespace MeetingGrpc.Server.Repositories
 {
-    public class ChatRepository : IRepository<Message>
+    public class ChatRepository : IRepository<Guid, Message>
     {
-        private readonly List<Message> localStorage = new List<Message>(); // dummy on memory storage
+        private readonly Dictionary<Guid, Message> localStorage = new Dictionary<Guid, Message>(); // dummy on memory storage
 
-        public void Add(Message message)
+        public void Add(Guid key, Message message)
         {
-            localStorage.Add(message);
+            localStorage.Add(key, message);
+        }
+
+        public void Remove(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(Guid key, Message obj)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Message> GetAll()
         {
-            return localStorage.AsReadOnly();
-        }
-
-        public void Remove(Message obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Message obj)
-        {
-            throw new NotImplementedException();
+            return localStorage.Values.AsEnumerable();
         }
     }
 }

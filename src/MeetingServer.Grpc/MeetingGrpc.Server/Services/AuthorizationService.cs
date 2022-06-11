@@ -62,7 +62,7 @@ namespace MeetingGrpc.Server.Services
             var token = GetJwtToken(newUserNotFull, userRoles);
             var userFull = new User(newUserNotFull.UserGuid, newUserNotFull.Name, token);
             _usersService.Add(userFull);
-            _captureFramesService.SwitchCaptureFrame(new ValueActionInfo<CaptureFrameInfo>(new CaptureFrameInfo(userFull.UserGuid, userFull.UserGuid), DateTime.UtcNow), CaptureFrameState.Created);
+            _captureFramesService.CreateArea(userFull.UserGuid, userFull.UserGuid, DateTime.UtcNow);
 
             return Task.FromResult(new ConnectResponse { IsSuccess = true, UserGuid = newUserNotFull.UserGuid.ToString(), JwtToken = token.JwtToken, Expiration = Timestamp.FromDateTime(token.Expiration) });
         }

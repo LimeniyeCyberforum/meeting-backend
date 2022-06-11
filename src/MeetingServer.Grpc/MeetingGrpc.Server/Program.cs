@@ -31,9 +31,9 @@ builder.Services.AddGrpc();
 //builder.Services.AddWebEncoders();
 //builder.Services.AddGrpcWeb(o => o.GrpcWebEnabled = true);
 
-builder.Services.AddSingleton<IRepository<Message>, ChatRepository>();
-builder.Services.AddSingleton<IRepository<ValueActionInfo<CaptureFrameInfo>>, FrameCaptureStatesRepository>();
-builder.Services.AddSingleton<IRepository<MeetingGrpc.Server.Model.User>, UsersRepository>();
+builder.Services.AddSingleton<IRepository<Guid, Message>, ChatRepository>();
+builder.Services.AddSingleton<IRepository<Guid, ValueActionInfo<CaptureFrameInfo>>, FrameCaptureStatesRepository>();
+builder.Services.AddSingleton<IRepository<Guid, MeetingGrpc.Server.Model.User>, UsersRepository>();
 
 builder.Services.AddSingleton<LocalUsersService>();
 builder.Services.AddSingleton<LocalChatService>();

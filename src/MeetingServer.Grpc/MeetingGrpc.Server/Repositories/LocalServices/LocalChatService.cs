@@ -8,11 +8,11 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
     {
         private readonly ILogger<LocalChatService> _logger;
 
-        private readonly IRepository<Message> _repository;
+        private readonly IRepository<Guid, Message> _repository;
 
         private event Action<(EventAction Action, Message Message)> Added;
 
-        public LocalChatService(ILogger<LocalChatService> logger, IRepository<Message> repository)
+        public LocalChatService(ILogger<LocalChatService> logger, IRepository<Guid, Message> repository)
         {
             _logger = logger;
             _repository = repository;
@@ -20,7 +20,7 @@ namespace MeetingGrpc.Server.Repositories.LocalServices
 
         public void Add(Message message)
         {
-            _repository.Add(message);
+            _repository.Add(message.Guid, message);
 
             _logger.LogInformation($"{message.User.Name}: {message.Content}\n{message.DateTime}");
 
