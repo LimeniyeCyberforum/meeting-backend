@@ -1,8 +1,3 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -10,16 +5,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["GrpsServer/GrpsServer.csproj", "GrpsServer/"]
-RUN dotnet restore "GrpsServer/GrpsServer.csproj"
+COPY ["src/MeetingServer.Grpc/MeetingGrpc.Server/MeetingGrpc.Server.csproj", "src/MeetingServer.Grpc/MeetingGrpc.Server/"]
+COPY ["src/MeetingServer.Grpc/MeetingGrpc.Protos/MeetingGrpc.Protos.csproj", "src/MeetingServer.Grpc/MeetingGrpc.Protos/"]
+RUN dotnet restore "src/MeetingServer.Grpc/MeetingGrpc.Server/MeetingGrpc.Server.csproj"
 COPY . .
-WORKDIR "/src/GrpsServer"
-RUN dotnet build "GrpsServer.csproj" -c Release -o /app/build
+WORKDIR "/src/src/MeetingServer.Grpc/MeetingGrpc.Server"
+RUN dotnet build "MeetingGrpc.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "GrpsServer.csproj" -c Release -o /app/publish
+RUN dotnet publish "MeetingGrpc.Server.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GrpsServer.dll"]
+ENTRYPOINT ["dotnet", "MeetingGrpc.Server.dll"]
