@@ -27,7 +27,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddAuthorization();
 builder.Services.AddGrpc();
-builder.Services.AddGrpc();
 //builder.Services.AddWebEncoders();
 //builder.Services.AddGrpcWeb(o => o.GrpcWebEnabled = true);
 
