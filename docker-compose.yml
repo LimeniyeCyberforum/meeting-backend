@@ -1,0 +1,16 @@
+version: "3"
+services:
+  api:
+    build: .
+    image: limeniye/meeting-grpc
+    ports:
+      - "44392:443"
+      - "54023:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44392
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=limeniye
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/meeting-grpc.pfx
+    volumes:
+      - ./https/meeting-grpc.pfx:/https/meeting-grpc.pfx:ro
