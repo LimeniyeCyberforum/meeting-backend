@@ -1,5 +1,3 @@
-This repository its backend of https://github.com/LimeniyeCyberforum/Meeting 
-
 Server info:
 
 | Cloud service provider  | Server location | Load balancer | OS |
