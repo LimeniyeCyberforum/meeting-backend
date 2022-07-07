@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MeetingGrpc.Protos\MeetingGrpc.Protos.csproj" />
+    <ProjectReference Include="..\..\..\sub\meeting-protobuf\MeetingProtobuf.Protos\MeetingProtobuf.Protos.csproj" />
   </ItemGroup>
 
 </Project>

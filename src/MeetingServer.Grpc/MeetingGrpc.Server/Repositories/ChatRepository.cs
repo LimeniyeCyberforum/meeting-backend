@@ -1,4 +1,4 @@
-﻿using MeetingGrpc.Protos;
+﻿using MeetingProtobuf.Protos;
 using MeetingGrpc.Server.Model;
 using System.ComponentModel.Composition;
 

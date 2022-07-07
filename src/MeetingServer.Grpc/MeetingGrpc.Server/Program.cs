@@ -1,4 +1,4 @@
-using MeetingGrpc.Protos;
+using MeetingProtobuf.Protos;
 using MeetingGrpc.Repositories.LocalServices;
 using MeetingGrpc.Server.Model;
 using MeetingGrpc.Server.Repositories;

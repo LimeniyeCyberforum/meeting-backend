@@ -1,6 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using MeetingGrpc.Protos;
+using MeetingProtobuf.Protos;
 using MeetingGrpc.Repositories.LocalServices;
 using MeetingGrpc.Server.Repositories.LocalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

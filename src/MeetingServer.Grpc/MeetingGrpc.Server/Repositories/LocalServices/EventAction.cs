@@ -1,4 +1,6 @@
-﻿namespace MeetingGrpc.Server.Repositories.LocalServices
+﻿using Action = MeetingProtobuf.Protos.Action;
+
+namespace MeetingGrpc.Server.Repositories.LocalServices
 {
     public enum EventAction
     {
@@ -9,29 +11,29 @@
 
     public static class ActionHelper
     {
-        public static Protos.Action ToProtosAction(this EventAction action)
+        public static Action ToProtosAction(this EventAction action)
         {
             switch (action)
             {   
                 case EventAction.Added:
-                    return Protos.Action.Added;
+                    return Action.Added;
                 case EventAction.Removed:
-                    return Protos.Action.Removed;
+                    return Action.Removed;
                 case EventAction.Changed:
-                    return Protos.Action.Changed;
+                    return Action.Changed;
             }
             throw new NotImplementedException();
         }
 
-        public static EventAction ToEventAction(this Protos.Action action)
+        public static EventAction ToEventAction(this Action action)
         {
             switch (action)
             {
-                case Protos.Action.Added:
+                case Action.Added:
                     return EventAction.Added;
-                case Protos.Action.Removed:
+                case Action.Removed:
                     return EventAction.Removed;
-                case Protos.Action.Changed:
+                case Action.Changed:
                     return EventAction.Changed;
             }
             throw new NotImplementedException();

@@ -1,6 +1,6 @@
 using Grpc.Core;
 using Google.Protobuf.WellKnownTypes;
-using MeetingGrpc.Protos;
+using MeetingProtobuf.Protos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MeetingGrpc.Server.Model;
